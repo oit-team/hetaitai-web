@@ -48,12 +48,12 @@
     </el-menu>
 
     <div class="account">
-      <el-dropdown>
+      <el-dropdown @command="handleCommand">
         <span class="account-name">
           测试用户<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item class="dropdown-item--danger">
+          <el-dropdown-item class="dropdown-item--danger" command="out">
             退出登录
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -69,6 +69,15 @@ export default {
   data: () => ({
     activeIndex: '1',
   }),
+  methods: {
+    handleCommand(command) {
+      if (command === 'out') {
+        this.$router.push({
+          name: 'Login',
+        })
+      }
+    },
+  },
 }
 </script>
 

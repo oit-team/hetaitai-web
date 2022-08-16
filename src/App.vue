@@ -1,17 +1,12 @@
 <template>
   <div id="app">
-    <VcLayout />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import VcLayout from '@/components/business/Layout'
-
 export default {
   name: 'App',
-  components: {
-    VcLayout,
-  },
 }
 </script>
 
