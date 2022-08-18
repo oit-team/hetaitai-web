@@ -7,7 +7,7 @@
           <el-input v-model="form.userPhone" prefix-icon="el-icon-s-custom"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="form.password" prefix-icon="el-icon-lock"></el-input>
+          <el-input v-model="form.password" prefix-icon="el-icon-lock" @change="login"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="w-full" @click="login">
@@ -41,30 +41,49 @@ export default {
     },
   }),
   methods: {
-    login() {
+    // login() {
+    //   // login({
+    //   //   con: {
+    //   //     userPhone: this.form.userPhone,
+    //   //     password: crypto.encrypt(this.form.password),
+    //   //   },
+    //   // }).then((res) => {
+    //   //   console.log(res)
+    //   // }).catch(() => {})
+    // },
+    async login() {
       // login({
       //   con: this.form,
       // }).then((res) => {
       //   console.log(res)
       // }).catch(() => {})
-      // axios({
-      //   url: 'http://192.168.9.250:9612/user/login',
-      //   method: 'post',
-      //   head: {
-      //     ver: '1.0',
-      //     ln: 'cn',
-      //     mod: 'app',
-      //     de: '2019-10-16',
-      //     sync: 1,
-      //     chcode: 'ef19843298ae8f2134f',
-      //   },
-      //   con: {
-      //     userPhone: this.form.userPhone,
-      //     password: crypto.encrypt(this.form.password),
-      //   },
-      // }).then((res) => {
-      //   console.log(res)
-      // })
+      await axios({
+        url: '/api/system/user/login',
+        method: 'post',
+        data: {
+          head: {
+            ver: '1.0',
+            ln: 'cn',
+            mod: 'app',
+            de: '2019-10-16',
+            sync: 1,
+            chcode: 'ef19843298ae8f2134f',
+          },
+          con: {
+            userPhone: this.form.userPhone,
+            password: crypto.encrypt(this.form.password),
+          },
+        },
+      }).then((res) => {
+        if (res.data.head.status === 0) {
+          this.$store.commit('changeUserInfo', res.data.body.resultList)
+          localStorage.setItem('token', res.data.body.token)
+          localStorage.setItem('userId', res.data.body.resultList.id)
+          this.$router.push({
+            name: 'home',
+          })
+        }
+      })
     },
   },
 }

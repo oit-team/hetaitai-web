@@ -2,6 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import { ApiError } from '@oit/api-error'
 import { Message } from 'element-ui'
+import store from '../store'
 import API_SERVICE from './enum/API_SERVICE'
 import API_STATUS from './enum/API_STATUS'
 
@@ -32,7 +33,7 @@ axiosInstance.interceptors.response.use((response) => {
 })
 
 export function post(url, params = {}, config = {}) {
-  const userData = {}
+  const userData = store.state.userInfo
 
   params = {
     head: {

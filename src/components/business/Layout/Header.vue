@@ -2,20 +2,26 @@
   <el-header>
     <div class="system">
       <el-avatar style="width: 40px; height: 40px" src="https://picsum.photos/40" />
-      <span class="system-name">项目模板</span>
-      <i
+      <span class="system-name">禾太太管理系统</span>
+      <!-- <i
         class="collapse-btn"
         :class="$store.state.aside.collapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
         @click="$store.commit('aside/switchCollapse')"
-      ></i>
+      ></i> -->
     </div>
 
     <el-menu class="scrollbar" :default-active="activeIndex" mode="horizontal" router>
-      <el-menu-item index="1" route="/">
-        处理中心
+      <el-menu-item
+        v-for="(item, index) in menuList"
+        :key="index"
+        :index="item.menuId"
+        :route="item.menuUrl"
+        @click="pushTo(item)"
+      >
+        {{ item.menuName }}
       </el-menu-item>
-      <el-menu-item index="3" route="/about">
-        消息中心
+      <!-- <el-menu-item index="4" route="user/userList">
+        用户管理
       </el-menu-item>
       <el-submenu index="2">
         <template slot="title">
@@ -44,13 +50,13 @@
             选项3
           </el-menu-item>
         </el-submenu>
-      </el-submenu>
+      </el-submenu> -->
     </el-menu>
 
     <div class="account">
       <el-dropdown @command="handleCommand">
         <span class="account-name">
-          测试用户<i class="el-icon-arrow-down el-icon--right"></i>
+          {{ $store.state.userInfo.nickName }}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item class="dropdown-item--danger" command="out">
@@ -63,18 +69,62 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'VcHeader',
-
   data: () => ({
     activeIndex: '1',
+    menuList: [],
+    // pageTo: '',
   }),
+  watch: {
+    menuList(newData) {
+      const MenuStatus = {}
+      newData.forEach((item, i) => {
+        MenuStatus[item.menuCode] = ''
+      })
+      sessionStorage.MenuStatus = JSON.stringify(MenuStatus)
+      this.activeIndex = `${newData[0].menuId}`
+    },
+  },
+  created() {
+    this.getEmnu()
+  },
   methods: {
+    // 退出登录
     handleCommand(command) {
       if (command === 'out') {
+        localStorage.clear()
         this.$router.push({
           name: 'Login',
         })
+      }
+    },
+    async getEmnu() {
+      await axios({
+        url: '/api/system/menu/getTreeMenuList',
+        method: 'post',
+        data: {
+          head: {
+            aid: localStorage.getItem('userId'),
+            ver: '1.0',
+            ln: 'cn',
+            cmd: 10008,
+            mod: 'app',
+            de: '2019-10-16',
+            sync: 1,
+            chcode: 'ef19843298ae8f2134f',
+          },
+          con: {},
+        },
+      }).then((res) => {
+        this.menuList = res.data.body.resultList
+      })
+    },
+    pushTo(item) {
+      if (item.fieldDes) {
+        sessionStorage.setItem('headTitString', item.fieldDes)
       }
     },
   },

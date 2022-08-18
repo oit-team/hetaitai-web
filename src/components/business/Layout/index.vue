@@ -2,7 +2,7 @@
   <el-container class="page-container" direction="vertical">
     <VcHeader />
     <el-container class="overflow-hidden">
-      <VcAside />
+      <!-- <VcAside /> -->
       <VcMain class="scrollbar" />
     </el-container>
   </el-container>
@@ -10,14 +10,14 @@
 
 <script>
 import VcHeader from './Header'
-import VcAside from './Aside'
+// import VcAside from './Aside'
 import VcMain from './Main'
 
 export default {
   name: 'VcLayout',
   components: {
     VcMain,
-    VcAside,
+    // VcAside,
     VcHeader,
   },
 }
