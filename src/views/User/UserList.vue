@@ -45,7 +45,9 @@ export default {
             name: '新增用户',
             type: 'success',
             icon: 'el-icon-plus',
-            // click: this.addUser,
+            click: scope => this.$router.push({
+              name: 'AddUser',
+            }),
           },
         ],
         table: {
@@ -54,19 +56,34 @@ export default {
             width: 180,
             buttons: [
               {
+                tip: '查看',
+                type: 'primary',
+                icon: 'el-icon-view',
+                click: scope => this.$router.push({
+                  name: 'AddUser',
+                  query: {
+                    item: scope,
+                    edit: false,
+                  },
+                }),
+              },
+              {
                 tip: '编辑',
                 type: 'warning',
                 icon: 'el-icon-edit',
-                // click: (scope) => this.$router.push({
-                //   path: '/system/menuList/AddMneu',
-                //   query: { item: scope },
-                // }),
+                click: scope => this.$router.push({
+                  name: 'AddUser',
+                  query: {
+                    item: scope,
+                    edit: true,
+                  },
+                }),
               },
               {
                 tip: '删除',
                 type: 'danger',
                 icon: 'el-icon-delete',
-                // click: this.deleteUser,
+                click: scope => this.deleteUser(scope),
               },
             ],
           },
@@ -109,7 +126,32 @@ export default {
     },
     addUser() {
     },
-    deleteUser() {
+    deleteUser(scope) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        await axios.post({
+          url: '/api/system/user/delUser',
+          data: {
+            head: {
+              aid: localStorage.getItem('userId'),
+              ver: '1.0',
+              ln: 'cn',
+              mod: 'app',
+              de: '2019-10-16',
+              sync: 1,
+              chcode: 'ef19843298ae8f2134f',
+            },
+            con: {
+              userId: scope.row.id,
+            },
+          },
+        }).then((res) => {
+          console.log(res)
+        })
+      })
     },
     add() {
       this.$router.push({

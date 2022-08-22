@@ -80,7 +80,7 @@ export default {
           localStorage.setItem('token', res.data.body.token)
           localStorage.setItem('userId', res.data.body.resultList.id)
           this.$router.push({
-            name: 'home',
+            name: 'ServiceList',
           })
         }
       })

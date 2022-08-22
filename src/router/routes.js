@@ -18,11 +18,11 @@ export default [
       keepAlive: true,
       requiresAuth: true,
     },
+    redirect: '/serviceList',
     children: [
       {
-        path: '/',
-        name: 'home',
-        redirect: 'ServiceList',
+        path: '/serviceList',
+        name: 'ServiceList',
         meta: {
           title: '服务管理',
           keepAlive: false,
@@ -50,16 +50,6 @@ export default [
         },
         component: () => import('../views/User/AddUser.vue'),
       },
-      // {
-      //   path: '/servicelist',
-      //   name: 'ServiceList',
-      //   meta: {
-      //     title: '服务管理',
-      //     keepAlive: false,
-      //     requiresAuth: true,
-      //   },
-      //   component: () => import('../views/Service/ServiceList.vue'),
-      // },
       {
         path: '/escortlist',
         name: 'EscortList',
