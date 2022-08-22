@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full">
-    <main class="flex-1 flex flex-col">
+    <main class="flex-1 flex flex-col overflow-hidden">
       <div id="customerList" class="pageCommonStyle" style="height:100%;display: flex;flex-direction: column;">
         <TablePage v-bind="tablePageOption" ref="table" auto></TablePage>
       </div>

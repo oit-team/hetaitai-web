@@ -31,18 +31,9 @@ export default {
     tablePageOption() {
       return {
         promise: this.getData,
-        actions: [
-          {
-            name: '新增菜单',
-            type: 'success',
-            icon: 'el-icon-plus',
-            // click: this.addUser,
-          },
-        ],
         table: {
           data: this.data.resultList,
           actions: {
-            width: 180,
             buttons: [
               {
                 tip: '编辑',
@@ -53,20 +44,12 @@ export default {
                 //   query: { item: scope },
                 // }),
               },
-              {
-                tip: '删除',
-                type: 'danger',
-                icon: 'el-icon-delete',
-                // click: this.deleteUser,
-              },
             ],
           },
         },
         pager: {
           total: this.data.count,
         },
-        // selectionItem: true,
-        // selection: true,
       }
     },
   },

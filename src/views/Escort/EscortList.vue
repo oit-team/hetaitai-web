@@ -5,16 +5,11 @@
         <TablePage v-bind="tablePageOption" ref="table" auto></TablePage>
       </div>
     </main>
-    <!-- userlist
-    <el-button @click="add">
-      add
-    </el-button> -->
   </div>
 </template>
 
 <script>
-// import { getUsers } from '@/api/user'
-import axios from 'axios'
+import { getEscortList } from '@/api/escort'
 
 export default {
   name: 'EscortList',
@@ -39,13 +34,13 @@ export default {
   computed: {
     tablePageOption() {
       return {
-        promise: this.loadData,
+        promise: this.getEscortList,
         actions: [
           {
-            name: '新增陪检员',
+            name: '新增陪诊员',
             type: 'success',
             icon: 'el-icon-plus',
-            // click: this.addUser,
+            to: '/escortlist/addEscort',
           },
         ],
         table: {
@@ -57,10 +52,10 @@ export default {
                 tip: '编辑',
                 type: 'warning',
                 icon: 'el-icon-edit',
-                // click: (scope) => this.$router.push({
-                //   path: '/system/menuList/AddMneu',
-                //   query: { item: scope },
-                // }),
+                click: ({ row }) => this.$router.push({
+                  path: '/escortlist/addEscort',
+                  query: { item: row },
+                }),
               },
               {
                 tip: '删除',
@@ -74,40 +69,24 @@ export default {
         pager: {
           total: this.data.count,
         },
-        // selectionItem: true,
-        // selection: true,
       }
     },
   },
   methods: {
-    async loadData() {
-      await axios({
-        url: '/api/system/user/getUsers',
-        method: 'post',
-        data: {
-          head: {
-            aid: localStorage.getItem('userId'),
-            ver: '1.0',
-            ln: 'cn',
-            mod: 'app',
-            de: '2019-10-16',
-            sync: 1,
-            chcode: 'ef19843298ae8f2134f',
-          },
-          con: { ...this.formData },
-        },
-      }).then((res) => {
-        if (res.data.head.status === 0) {
-          this.data = res.data.body
-        } else {
-          this.$message.error(res.data.head.msg)
-        }
+    async getEscortList() {
+      const res = await getEscortList({
+        ...this.formData,
       })
-      // getUsers().then((res) => {
-      //   console.log(res)
-      // }).catch(() => {})
+      this.data = res.body
     },
     addUser() {
+      // this.$router.push({
+      //     name: 'AddEscort',
+      //     query: {
+      //       item: scope,
+      //       edit: false,
+      //     },
+      //   }),
     },
     deleteUser() {
     },

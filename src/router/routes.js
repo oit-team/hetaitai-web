@@ -51,6 +51,16 @@ export default [
         component: () => import('../views/User/AddUser.vue'),
       },
       {
+        path: '/escortlist/addEscort',
+        name: 'AddEscort',
+        meta: {
+          title: '新增陪检员',
+          keepAlive: false,
+          requiresAuth: true,
+        },
+        component: () => import('../views/Escort/AddEscort.vue'),
+      },
+      {
         path: '/escortlist',
         name: 'EscortList',
         meta: {

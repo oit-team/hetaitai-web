@@ -20,7 +20,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import crypto from '@/utils/crypto'
 import { login } from '@/api/login'
 
@@ -40,49 +39,19 @@ export default {
       ],
     },
   }),
+  created: {
+  },
   methods: {
-    // login() {
-    //   // login({
-    //   //   con: {
-    //   //     userPhone: this.form.userPhone,
-    //   //     password: crypto.encrypt(this.form.password),
-    //   //   },
-    //   // }).then((res) => {
-    //   //   console.log(res)
-    //   // }).catch(() => {})
-    // },
     async login() {
-      // login({
-      //   con: this.form,
-      // }).then((res) => {
-      //   console.log(res)
-      // }).catch(() => {})
-      await axios({
-        url: '/api/system/user/login',
-        method: 'post',
-        data: {
-          head: {
-            ver: '1.0',
-            ln: 'cn',
-            mod: 'app',
-            de: '2019-10-16',
-            sync: 1,
-            chcode: 'ef19843298ae8f2134f',
-          },
-          con: {
-            userPhone: this.form.userPhone,
-            password: crypto.encrypt(this.form.password),
-          },
-        },
-      }).then((res) => {
-        if (res.data.head.status === 0) {
-          this.$store.commit('changeUserInfo', res.data.body.resultList)
-          localStorage.setItem('token', res.data.body.token)
-          localStorage.setItem('userId', res.data.body.resultList.id)
-          this.$router.push({
-            name: 'ServiceList',
-          })
-        }
+      const res = await login({
+        userPhone: this.form.userPhone,
+        password: crypto.encrypt(this.form.password),
+      })
+      this.$store.commit('changeUserInfo', res.body.resultList)
+      localStorage.setItem('token', res.body.token)
+      localStorage.setItem('userId', res.body.resultList.id)
+      this.$router.push({
+        name: 'ServiceList',
       })
     },
   },
