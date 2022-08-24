@@ -1,25 +1,19 @@
 <template>
   <div class="flex h-full">
-    <main class="flex-1 flex flex-col overflow-hidden">
-      <div id="customerList" class="pageCommonStyle" style="height:100%;display: flex;flex-direction: column;">
+    <main class="flex-1 flex flex-col">
+      <div id="customerList" class="pageCommonStyle h-full flex flex-col">
         <TablePage v-bind="tablePageOption" ref="table" auto></TablePage>
       </div>
     </main>
-    <!-- userlist
-    <el-button @click="add">
-      add
-    </el-button> -->
   </div>
 </template>
 
 <script>
-// import { getUsers } from '@/api/user'
-import axios from 'axios'
+import { delUser, getUsers } from '@/api/user'
 
 export default {
-  name: 'User',
+  name: 'UserList',
   components: {
-    // TablePage,
   },
   data: () => {
     return {
@@ -27,29 +21,18 @@ export default {
       count: '',
       resultList: {},
       formData: {
-        pageNum: 1,
-        pageSize: 20,
-        userPhone: '',
         userType: '',
         sex: '',
         state: '',
+        pageNum: 1,
+        pageSize: 20,
       },
     }
   },
   computed: {
     tablePageOption() {
       return {
-        promise: this.loadData,
-        actions: [
-          {
-            name: '新增用户',
-            type: 'success',
-            icon: 'el-icon-plus',
-            click: scope => this.$router.push({
-              name: 'AddUser',
-            }),
-          },
-        ],
+        promise: this.getUsers,
         table: {
           data: this.data.resultList,
           actions: {
@@ -59,10 +42,10 @@ export default {
                 tip: '查看',
                 type: 'primary',
                 icon: 'el-icon-view',
-                click: scope => this.$router.push({
+                click: ({ row }) => this.$router.push({
                   name: 'AddUser',
                   query: {
-                    item: scope,
+                    item: row,
                     edit: false,
                   },
                 }),
@@ -71,10 +54,10 @@ export default {
                 tip: '编辑',
                 type: 'warning',
                 icon: 'el-icon-edit',
-                click: scope => this.$router.push({
+                click: ({ row }) => this.$router.push({
                   name: 'AddUser',
                   query: {
-                    item: scope,
+                    item: row,
                     edit: true,
                   },
                 }),
@@ -83,7 +66,7 @@ export default {
                 tip: '删除',
                 type: 'danger',
                 icon: 'el-icon-delete',
-                click: scope => this.deleteUser(scope),
+                click: this.delUser,
               },
             ],
           },
@@ -91,71 +74,29 @@ export default {
         pager: {
           total: this.data.count,
         },
-        // selectionItem: true,
-        // selection: true,
       }
     },
   },
   methods: {
-    async loadData() {
-      await axios({
-        url: '/api/system/user/getUsers',
-        method: 'post',
-        data: {
-          head: {
-            aid: localStorage.getItem('userId'),
-            ver: '1.0',
-            ln: 'cn',
-            mod: 'app',
-            de: '2019-10-16',
-            sync: 1,
-            chcode: 'ef19843298ae8f2134f',
-          },
-          con: { ...this.formData },
-        },
-      }).then((res) => {
-        if (res.data.head.status === 0) {
-          this.data = res.data.body
-        } else {
-          this.$message.error(res.data.head.msg)
-        }
+    // 获取用户列表
+    async getUsers(params) {
+      const res = await getUsers({
+        ...this.formData,
+        ...params,
       })
-      // getUsers().then((res) => {
-      //   console.log(res)
-      // }).catch(() => {})
+      this.data = res.body
+      this.$refs.table.doLayout()
     },
-    addUser() {
-    },
-    deleteUser(scope) {
-      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }).then(async () => {
-        await axios.post({
-          url: '/api/system/user/delUser',
-          data: {
-            head: {
-              aid: localStorage.getItem('userId'),
-              ver: '1.0',
-              ln: 'cn',
-              mod: 'app',
-              de: '2019-10-16',
-              sync: 1,
-              chcode: 'ef19843298ae8f2134f',
-            },
-            con: {
-              userId: scope.row.id,
-            },
-          },
-        }).then((res) => {
-          console.log(res)
-        })
+
+    // 删除陪检员
+    async delUser({ row }) {
+      const res = await delUser({
+        userId: row.id,
       })
-    },
-    add() {
-      this.$router.push({
-        name: 'addUser',
+      this.getUsers()
+      this.$message({
+        message: res.head.msg,
+        type: 'success',
       })
     },
   },

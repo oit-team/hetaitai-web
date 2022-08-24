@@ -2,40 +2,40 @@
   <div>
     <div class="container main m-auto">
       <header class="flex justify-between items-center">
-        <el-page-header :content="content" @back="$router.back()">
+        <el-page-header :content="title" @back="$router.go(-1)">
         </el-page-header>
-        <div v-if="$route.query.edit === true || !$route.query.item">
-          <el-button type="primary" @click="submit">
-            保存
-          </el-button>
-        </div>
       </header>
-      <el-main>
-        <el-form ref="form" :model="form" label-width="80px">
+      <el-divider></el-divider>
+      <el-main style="width:50%;">
+        <el-form ref="form" :model="form" label-width="120px">
           <el-form-item label="姓名" prop="nickName">
-            <el-input v-model="form.nickName"></el-input>
+            <el-input v-model="form.nickName" :readonly="!isEdit"></el-input>
           </el-form-item>
           <el-form-item label="手机号" prop="userPhone">
-            <el-input v-model="form.userPhone"></el-input>
+            <el-input v-model="form.userPhone" :readonly="!isEdit"></el-input>
           </el-form-item>
           <el-form-item label="性别" prop="sex">
-            <el-select v-model="form.sex" placeholder="性别">
-              <el-option label="男" value="0"></el-option>
-              <el-option label="女" value="1"></el-option>
+            <el-select v-model="form.sex" placeholder="性别" :disabled="!isEdit">
+              <el-option label="男" :value="0"></el-option>
+              <el-option label="女" :value="1"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="用户类型" prop="userType">
-            <el-select v-model="form.userType" placeholder="用户类型">
-              <el-option label="管理" value="1"></el-option>
-              <el-option label="陪诊陪检人员" value="2"></el-option>
-              <el-option label="客户" value="3"></el-option>
-            </el-select>
+          <el-form-item label="用户类型" prop="userTypeName">
+            <el-input v-model="form.userTypeName" :readonly="!isEdit"></el-input>
           </el-form-item>
-          <el-form-item label="初始密码" prop="password">
-            <el-input v-model="form.password"></el-input>
-          </el-form-item>
+          <!-- <el-form-item v-if="isEdit" label="初始密码" prop="password">
+            <el-input v-model="form.password" :readonly="!isEdit"></el-input>
+          </el-form-item> -->
           <el-form-item label="地址" prop="address">
-            <el-input v-model="form.address"></el-input>
+            <el-input v-model="form.address" :readonly="!isEdit"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button v-if="isEdit" size="small" icon="el-icon-check" type="primary" @click="submitForm('form')">
+              保存
+            </el-button>
+            <!-- <el-button v-if="isEdit" type="success" size="small" icon="el-icon-refresh" @click="resetForm('form')">
+              重置
+            </el-button> -->
           </el-form-item>
         </el-form>
       </el-main>
@@ -44,30 +44,100 @@
 </template>
 
 <script>
+import { addUser, editUser, getUserById } from '@/api/user'
 export default {
-  name: 'AddUser',
+  name: 'AddEscort',
   data() {
     return {
-      form: {
-        nickName: '',
-        userPhone: '',
-        password: '',
-        userType: '',
-        sex: '',
-        address: '',
-      },
+      isEdit: false,
+      form: {},
       content: '',
+      id: '',
+      rules: {
+        nickName: [
+          { message: '请输入姓名', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个汉字', trigger: 'blur' },
+        ],
+        userPhone: [
+          { message: '请输入联系电话', trigger: 'blur' },
+          { min: 2, max: 32, message: '长度11位数字', trigger: 'blur' },
+        ],
+      },
     }
   },
   created() {
-    // edit -> 是否是编辑  有item，则表示不是新增
-    this.content = this.$route.query.item && this.$route.query.edit ? '编辑用户' : this.$route.query.item && !this.$route.query.edit ? '查看用户' : '新增用户'
     if (this.$route.query.item) {
-      this.form = this.$route.query.item.row
+      this.isEdit = this.$route.query.edit
+      this.title = this.isEdit ? '编辑用户' : '查看用户'
+      // this.editFlag = false
+      this.id = this.$route.query.item.id
+      this.getUserById()
+    } else {
+      // this.title = '新增用户'
+      // this.form = {}
     }
   },
+  activated() {
+  },
   methods: {
-    submit() {
+    // 查询用户详情
+    async getUserById() {
+      const res = await getUserById({
+        userId: this.id,
+      })
+      this.form = res.body
+    },
+    // 查看用户
+    // async addUser() {
+    //   const res = await addUser({
+    //     userPhone: this.form.userPhone,
+    //     password: CryptoJS.encrypt(this.form.password),
+    //     userType: this.form.userType,
+    //     sex: this.form.sex,
+    //     nickName: this.form.nickName,
+    //     address: this.form.address,
+    //   })
+    //   this.$refs.table.getEscortList()
+    //   this.$message({
+    //     message: res.head.msg,
+    //     type: 'success',
+    //   })
+    // },
+
+    // 编辑用户信息
+    async editUser() {
+      const res = await editUser({
+        userId: this.form.id,
+        userPhone: this.form.userPhone,
+        userType: this.form.userType,
+        sex: this.form.sex,
+        nickName: this.form.nickName,
+        address: this.form.address,
+      })
+      this.$message({
+        message: res.head.msg,
+        type: 'success',
+      })
+      this.$refs.table.getUsers()
+    },
+    // 提交
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          if (!this.isEdit) {
+            // this.addUser()
+          } else {
+            this.editUser()
+          }
+          this.$router.back()
+        } else {
+          return false
+        }
+      })
+    },
+    // 重置
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
     },
   },
 }

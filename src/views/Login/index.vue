@@ -47,6 +47,7 @@ export default {
         userPhone: this.form.userPhone,
         password: crypto.encrypt(this.form.password),
       })
+      console.log(res)
       this.$store.commit('changeUserInfo', res.body.resultList)
       localStorage.setItem('token', res.body.token)
       localStorage.setItem('userId', res.body.resultList.id)
