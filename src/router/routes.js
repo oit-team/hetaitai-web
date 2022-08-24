@@ -31,6 +31,16 @@ export default [
         component: () => import('../views/Service/ServiceList.vue'),
       },
       {
+        path: '/servicelist/editService',
+        name: 'EditService',
+        meta: {
+          title: '编辑服务',
+          keepAlive: false,
+          requiresAuth: true,
+        },
+        component: () => import('../views/Service/EditService.vue'),
+      },
+      {
         path: '/userlist',
         name: 'UserList',
         meta: {
@@ -79,6 +89,16 @@ export default [
           requiresAuth: true,
         },
         component: () => import('../views/Order/OrderList.vue'),
+      },
+      {
+        path: '/orderlist/checkOrder',
+        name: 'CheckOrder',
+        meta: {
+          title: '订单详情',
+          keepAlive: false,
+          requiresAuth: true,
+        },
+        component: () => import('../views/Order/CheckOrder.vue'),
       },
     ],
   },

@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full">
-    <main class="flex-1 flex flex-col">
-      <div id="customerList" class="pageCommonStyle" style="height:100%;display: flex;flex-direction: column;">
+    <main class="flex-1 flex flex-col" style="width:90%">
+      <div id="customerList" class="pageCommonStyle h-full flex flex-col">
         <TablePage v-bind="tablePageOption" ref="table" auto></TablePage>
       </div>
     </main>
@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { getServicesList } from '@/api/service'
 
 export default {
   name: 'ServiceList',
@@ -17,12 +17,12 @@ export default {
     return {
       data: {},
       formData: {
-        pageNum: 1,
-        pageSize: 20,
         serviceNo: '',
         serviceName: '',
         serviceType: '',
         specificService: '',
+        pageNum: 1,
+        pageSize: 20,
       },
       resultList: [],
     }
@@ -30,7 +30,7 @@ export default {
   computed: {
     tablePageOption() {
       return {
-        promise: this.getData,
+        promise: this.getServicesList,
         table: {
           data: this.data.resultList,
           actions: {
@@ -39,10 +39,10 @@ export default {
                 tip: '编辑',
                 type: 'warning',
                 icon: 'el-icon-edit',
-                // click: (scope) => this.$router.push({
-                //   path: '/system/menuList/AddMneu',
-                //   query: { item: scope },
-                // }),
+                click: ({ row }) => this.$router.push({
+                  path: '/servicelist/editService',
+                  query: { item: row },
+                }),
               },
             ],
           },
@@ -54,31 +54,17 @@ export default {
     },
   },
   created() {
+    this.getServicesList()
   },
   methods: {
-    async getData() {
-      await axios({
-        url: '/api/goods/serviceInfo/getServices',
-        method: 'post',
-        data: {
-          head: {
-            aid: localStorage.getItem('userId'),
-            ver: '1.0',
-            ln: 'cn',
-            mod: 'app',
-            de: '2019-10-16',
-            sync: 1,
-            chcode: 'ef19843298ae8f2134f',
-          },
-          con: { ...this.formData },
-        },
-      }).then((res) => {
-        if (res.data.head.status === 0) {
-          this.data = res.data.body
-        } else {
-          this.$message.error(res.data.head.msg)
-        }
+    // 获取服务列表
+    async getServicesList(params) {
+      const res = await getServicesList({
+        ...this.formData,
+        ...params,
       })
+      this.data = res.body
+      this.$refs.table.doLayout()
     },
   },
 }
