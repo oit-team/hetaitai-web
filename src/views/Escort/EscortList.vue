@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full">
     <main class="flex-1 flex flex-col">
-      <div id="customerList" class="pageCommonStyle" style="height:100%;display: flex;flex-direction: column;">
+      <div id="customerList" class="pageCommonStyle h-full flex flex-col">
         <TablePage v-bind="tablePageOption" ref="table" auto></TablePage>
       </div>
     </main>
@@ -9,12 +9,11 @@
 </template>
 
 <script>
-import { getEscortList } from '@/api/escort'
+import { deleteEscortList, getEscortList } from '@/api/escort'
 
 export default {
   name: 'EscortList',
   components: {
-    // TablePage,
   },
   data: () => {
     return {
@@ -22,12 +21,12 @@ export default {
       count: '',
       resultList: {},
       formData: {
-        pageNum: 1,
-        pageSize: 20,
         userPhone: '',
         userType: 2,
         sex: '',
         state: '',
+        pageNum: 1,
+        pageSize: 20,
       },
     }
   },
@@ -61,7 +60,7 @@ export default {
                 tip: '删除',
                 type: 'danger',
                 icon: 'el-icon-delete',
-                // click: this.deleteUser,
+                click: this.deleteEscortList,
               },
             ],
           },
@@ -73,26 +72,25 @@ export default {
     },
   },
   methods: {
-    async getEscortList() {
+    // 获取陪检员列表
+    async getEscortList(params) {
       const res = await getEscortList({
         ...this.formData,
+        ...params,
       })
       this.data = res.body
+      this.$refs.table.doLayout()
     },
-    addUser() {
-      // this.$router.push({
-      //     name: 'AddEscort',
-      //     query: {
-      //       item: scope,
-      //       edit: false,
-      //     },
-      //   }),
-    },
-    deleteUser() {
-    },
-    add() {
-      this.$router.push({
-        name: 'addUser',
+
+    // 删除陪检员
+    async deleteEscortList({ row }) {
+      const res = await deleteEscortList({
+        userId: row.id,
+      })
+      this.getEscortList()
+      this.$message({
+        message: res.head.msg,
+        type: 'success',
       })
     },
   },

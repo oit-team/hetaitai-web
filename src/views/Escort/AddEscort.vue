@@ -6,8 +6,8 @@
         </el-page-header>
       </header>
       <el-divider></el-divider>
-      <el-main>
-        <el-form ref="form" :model="form" label-width="80px">
+      <el-main style="width:50%;">
+        <el-form ref="form" :rules="rules" :model="form" label-width="120px">
           <el-form-item label="姓名" prop="nickName">
             <el-input v-model="form.nickName"></el-input>
           </el-form-item>
@@ -16,17 +16,17 @@
           </el-form-item>
           <el-form-item label="性别" prop="sex">
             <el-select v-model="form.sex" placeholder="性别">
-              <el-option label="男" value="0"></el-option>
-              <el-option label="女" value="1"></el-option>
+              <el-option label="男" :value="0"></el-option>
+              <el-option label="女" :value="1"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="用户类型" prop="userType">
             <el-select v-model="form.userType" placeholder="用户类型">
-              <el-option label="管理" value="1"></el-option>
-              <el-option label="陪诊陪检人员" value="2"></el-option>
+              <el-option label="管理" :value="1"></el-option>
+              <el-option label="陪诊陪检人员" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="初始密码" prop="password" disabled="editFlag">
+          <el-form-item v-if="editFlag" label="初始密码" prop="password">
             <el-input v-model="form.password"></el-input>
           </el-form-item>
           <el-form-item label="地址" prop="address">
@@ -57,6 +57,16 @@ export default {
       form: {},
       content: '',
       id: '',
+      rules: {
+        nickName: [
+          { required: true, message: '请输入姓名', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个汉字', trigger: 'blur' },
+        ],
+        userPhone: [
+          { required: true, message: '请输入联系电话', trigger: 'blur' },
+          { min: 2, max: 32, message: '长度11位数字', trigger: 'blur' },
+        ],
+      },
     }
   },
   created() {
@@ -73,14 +83,14 @@ export default {
   activated() {
   },
   methods: {
-    // 查询用户详情
+    // 查询陪诊员详情
     async getEscortListById() {
       const res = await getEscortListById({
         userId: this.id,
       })
       this.form = res.body
     },
-    // 新增
+    // 新增陪诊员
     async addEscortList() {
       const res = await addEscortList({
         userPhone: this.form.userPhone,
@@ -90,11 +100,13 @@ export default {
         nickName: this.form.nickName,
         address: this.form.address,
       })
+      this.$refs.table.getEscortList()
       this.$message({
         message: res.head.msg,
         type: 'success',
       })
     },
+    // 编辑陪诊员信息
     async editEscortList() {
       const res = await editEscortList({
         userId: this.form.id,
@@ -104,6 +116,7 @@ export default {
         nickName: this.form.nickName,
         address: this.form.address,
       })
+      this.$refs.table.getEscortList()
       this.$message({
         message: res.head.msg,
         type: 'success',
