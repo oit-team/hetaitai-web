@@ -6,11 +6,11 @@
         </el-page-header>
       </header>
       <el-divider></el-divider>
-      <el-main style="width:80%;">
+      <el-main class="flex flex-col justify-center" style="width:80%;">
         <el-descriptions title="基础信息" :column="3" :size="size">
           <template slot="extra">
-            <el-button type="primary" size="small">
-              操作
+            <el-button type="primary" plain size="small" @click="openDistributionRecords">
+              分配记录
             </el-button>
           </template>
           <el-descriptions-item label="下单人">
@@ -52,9 +52,6 @@
           <el-card v-if="form.specificService" class="box-card">
             <div slot="header" class="clearfix">
               <span>专项服务</span>
-              <el-button style="float: right; padding: 3px 0" type="text">
-                操作按钮
-              </el-button>
             </div>
             <div class="text item">
               <el-descriptions class="margin-top" :column="3" :size="size">
@@ -76,12 +73,53 @@
           <el-empty v-else description="暂无专项服务"></el-empty>
         </div>
       </el-main>
+      <el-drawer
+        title="订单分配日志"
+        :visible.sync="drawer"
+        :direction="direction"
+        :before-close="handleClose"
+      >
+        <div class="py-3 px-4">
+          <div v-if="distributionRecords.length === 0">
+            <el-empty description="暂无分配记录" />
+          </div>
+          <div v-else>
+            <div v-for="(item, index) in distributionRecords" :key="index" class="mb-4 text-sm">
+              <div class="flex">
+                <p class="mr-24">操作人：{{ item.operationId || '无' }}</p><p class="mr-24">接单人：{{ item.distributionId || '无' }}</p>
+              </div>
+              <div v-if="item.operationId && item.distributionId">
+                <p class="mr-24">
+                  <span>分配订单前：</span><span class="text-red-600">{{ JSON.parse(item.stateChange).oldState }}</span>
+                </p>
+                <p class="mr-24">
+                  <span>分配订单后：</span><span class="text-blue-500">{{ JSON.parse(item.stateChange).newState }}</span>
+                </p>
+                <p class="mr-24">
+                  <span>订单分配时间：</span>{{ item.distributionTime }}
+                </p>
+              </div>
+              <div v-if="item.operationId && !item.distributionId">
+                <p class="mr-24">
+                  <span>{{ item.distributionId }}</span>在<span>{{ item.completeTime }}</span>接受了该下发订单！
+                </p>
+              </div>
+              <div v-if="!item.operationId && !item.distributionId">
+                <p class="mr-24">
+                  <span>该订单已超时，返回重新下发！</span>
+                </p>
+              </div>
+              <el-divider class="!my-2" />
+            </div>
+          </div>
+        </div>
+      </el-drawer>
     </div>
   </div>
 </template>
 
 <script>
-import { getCustomerOrderById } from '@/api/order'
+import { getCustomerOrderById, getDistributionRecords } from '@/api/order'
 export default {
   name: 'CheckOrder',
   data() {
@@ -91,10 +129,12 @@ export default {
       form: {},
       content: '',
       orderNo: '',
+      drawer: false,
+      direction: 'rtl',
+      distributionRecords: [],
     }
   },
   created() {
-    console.log(this.$store.state.userInfo.userType)
     if (this.$route.query.item) {
       this.title = '订单详情'
       this.orderNo = this.$route.query.item.orderNo
@@ -111,39 +151,27 @@ export default {
       })
       this.form = res.body
     },
-
-    // 编辑用户信息
-    // async editUser() {
-    //   const res = await editUser({
-    //     userId: this.form.id,
-    //     userPhone: this.form.userPhone,
-    //     userType: this.form.userType,
-    //     sex: this.form.sex,
-    //     nickName: this.form.nickName,
-    //     address: this.form.address,
-    //   })
-    //   this.$message({
-    //     message: res.head.msg,
-    //     type: 'success',
-    //   })
-    //   this.$refs.table.getUsers()
-    // },
-
-    // 提交
-    // submitForm(formName) {
-    //   this.$refs[formName].validate((valid) => {
-    //     if (valid) {
-    //       if (!this.isEdit) {
-    //         // this.addUser()
-    //       } else {
-    //         this.editUser()
-    //       }
-    //       this.$router.back()
-    //     } else {
-    //       return false
-    //     }
-    //   })
-    // },
+    // 点击分配记录
+    openDistributionRecords() {
+      this.drawer = true
+      this.getDistributionRecords()
+    },
+    //
+    async getDistributionRecords() {
+      const res = await getDistributionRecords({
+        orderNo: this.orderNo,
+      })
+      console.log('订单分配记录', res)
+      this.distributionRecords = res.body.resultList
+      console.log(this.distributionRecords)
+    },
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then((_) => {
+          done()
+        })
+        .catch((_) => {})
+    },
   },
 }
 </script>
