@@ -63,8 +63,7 @@ export default {
           { min: 2, max: 10, message: '长度在 2 到 10 个汉字', trigger: 'blur' },
         ],
         userPhone: [
-          { required: true, message: '请输入联系电话', trigger: 'blur' },
-          { min: 2, max: 32, message: '长度11位数字', trigger: 'blur' },
+          { required: true, message: '请输入正确联系电话且长度11位数字', trigger: 'blur' },
         ],
       },
     }

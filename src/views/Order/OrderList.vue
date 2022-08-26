@@ -2,7 +2,30 @@
   <div class="flex h-full">
     <main class="flex-1 flex flex-col overflow-hidden">
       <div id="customerList" class="pageCommonStyle h-full flex flex-col">
-        <TablePage v-bind="tablePageOption" ref="table" auto></TablePage>
+        <TablePage v-bind="tablePageOption" ref="table" auto>
+          <template #content:orderState="{ row }">
+            <el-tag v-if="row.orderState === '未支付'" type="danger">
+              {{ row.orderState }}
+            </el-tag>
+            <el-tag v-if="row.orderState === '待分配'" type="warning">
+              {{ row.orderState }}
+            </el-tag>
+            <el-tag v-if="row.orderState === '服务中'" type="success">
+              {{ row.orderState }}
+            </el-tag>
+          </template>
+          <template #content:distributionState="{ row }">
+            <el-tag v-if="row.distributionState === '未分配'" type="danger">
+              {{ row.distributionState }}
+            </el-tag>
+            <el-tag v-if="row.distributionState === '已分配'" type="warning">
+              {{ row.distributionState }}
+            </el-tag>
+            <el-tag v-if="row.distributionState === '已接单'" type="success">
+              {{ row.distributionState }}
+            </el-tag>
+          </template>
+        </TablePage>
       </div>
     </main>
     <el-drawer
@@ -11,23 +34,22 @@
       title="下发订单"
       :visible.sync="drawer"
       direction="rtl"
+      size="45%"
     >
-      <div class="demo-drawer__content py-3 px-4">
-        <el-form :model="escortForm">
-          <el-form-item label="分配人：" prop="nickName">
-            <el-select v-model="escortForm.nickName" placeholder="请选择要分配的人员">
-              <el-option v-for="item in escortList" :key="item.id" :label="item.nickName" :value="item.nickName"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-form>
-        <div class="demo-drawer__footer">
-          <el-button size="small" @click="cancelForm">
-            取 消
-          </el-button>
-          <el-button size="small" type="primary" @click="confirm()">
-            确定
-          </el-button>
-        </div>
+      <div class="h-full flex flex-col py-3 px-4">
+        <TablePage v-bind="allotTablePageOption" ref="allotTable" class="allot-table">
+          <template #content:distributionState="{ row }">
+            <el-tag v-if="row.distributionState === '未分配'" type="danger">
+              {{ row.distributionState }}
+            </el-tag>
+            <el-tag v-if="row.distributionState === '已分配'" type="warning">
+              {{ row.distributionState }}
+            </el-tag>
+            <el-tag v-if="row.distributionState === '已接单'" type="success">
+              {{ row.distributionState }}
+            </el-tag>
+          </template>
+        </TablePage>
       </div>
     </el-drawer>
   </div>
@@ -35,12 +57,13 @@
 
 <script>
 import { getOrderList, updateDistributionState } from '@/api/order'
-import { getEscortList } from '@/api/escort'
+import { getUserList } from '@/api/user'
 export default {
   name: 'OrderList',
   data: () => {
     return {
       data: {},
+      allotData: {},
       formData: {
         pageNum: 1,
         pageSize: 20,
@@ -52,14 +75,12 @@ export default {
       },
       drawer: false,
       orderNo: '',
-      checkedEscortInfo: '',
-      escortForm: {},
-      escortList: [],
-      // rules: {
-      //   nickName: [
-      //     { required: true, message: '请选择接单人', trigger: 'change' },
-      //   ],
-      // },
+      // checkedEscortInfo: '',
+      // escortForm: {},
+      // escortList: [],
+      pageNum: 1,
+      pageSize: 20,
+
     }
   },
   computed: {
@@ -85,7 +106,7 @@ export default {
               {
                 tip: '下发',
                 type: 'success',
-                icon: 'el-icon-position',
+                icon: 'el-icon-thumb',
                 disabled: this.isDisabled,
                 click: this.allocationOrder,
               },
@@ -116,6 +137,28 @@ export default {
         },
       }
     },
+    allotTablePageOption() {
+      return {
+        promise: this.getUserList,
+        table: {
+          data: this.allotData.resultList,
+          actions: {
+            width: 160,
+            buttons: [
+              {
+                tip: '分配',
+                type: 'success',
+                icon: 'el-icon-position',
+                click: this.updateDistributionState,
+              },
+            ],
+          },
+        },
+        pager: {
+          total: this.allotData.count,
+        },
+      }
+    },
   },
   created() {
     this.getOrderList()
@@ -124,7 +167,28 @@ export default {
     this.getOrderList()
   },
   methods: {
-    // 查询订单
+    // 设置下发订单文本域
+    setAllotTableField() {
+      console.log(this.$refs.allotTable)
+      this.$refs.allotTable.setFields([{
+        fieldKey: 'nickName',
+        fieldName: '真实姓名',
+        fieldType: '文本',
+      },
+      {
+        fieldKey: 'userPhone',
+        fieldName: '联系电话',
+        fieldType: '文本',
+      },
+      {
+        fieldKey: 'userServiceStateName',
+        fieldName: '接单状态',
+        fieldType: '文本',
+        noSearchShow: true,
+      }])
+    },
+
+    // 查询订单列表
     async getOrderList(params) {
       const res = await getOrderList({
         ...this.formData,
@@ -132,73 +196,83 @@ export default {
       })
       this.data = res.body
     },
-    // 是否禁用
+    // 下发按钮是否禁用
     isDisabled({ row }) {
       return !(row.distributionState === '未分配' && row.orderState === '待分配' && this.$store.state.userInfo.userType === 1)
     },
-    // 分配订单
+    // 点击下发订单按钮
     allocationOrder({ row }) {
       this.orderNo = row.orderNo
       this.drawer = true
-      this.getEscortList()
-    },
-    // 查询陪检员列表
-    async getEscortList() {
-      const res = await getEscortList({
-        pageNum: 1,
-        pageSize: 999,
-        userType: 2,
+      this.$nextTick(() => {
+        this.setAllotTableField()
+        this.$refs.allotTable.loadData()
       })
-      this.escortList = res.body.resultList
+    },
+    // 获取陪检员数据
+    async getUserList(params) {
+      const res = await getUserList({
+        ...params,
+      })
+      this.allotData = res.body
     },
     // 分配陪检员
-    async updateDistributionState() {
+    async updateDistributionState({ row }) {
       const res = await updateDistributionState({
         distributionState: '2',
         orderNo: this.orderNo,
-        distributionId: (this.checkedEscortInfo[0].id).toString(),
+        distributionId: row.userId,
       })
-      console.log('点击确定分配陪检员', res)
       if (res.head.status === 0) {
+        this.$refs.allotTable.loadData()
         this.$message({
-          message: '分配成功',
+          message: '分配成功!',
           type: 'success',
         })
+        this.drawer = false
       } else {
         this.$message({
           message: res.head.msg,
-          type: 'success',
+          type: 'warning',
         })
       }
     },
     // drawer点击确定
-    confirm() {
-      console.log('点击了确定')
-      if (this.escortForm.nickName) {
-        this.checkedEscortInfo = this.escortList.filter((item) => {
-          return this.escortForm.nickName.includes(item.nickName)
-        })
-        console.log('选中的陪检员信息', this.checkedEscortInfo)
-        this.updateDistributionState()
-        this.getOrderList()
-        this.drawer = false
-      }
-    },
+    // confirm() {
+    //   console.log('点击了确定')
+    //   if (this.escortForm.nickName) {
+    //     this.checkedEscortInfo = this.escortList.filter((item) => {
+    //       return this.escortForm.nickName.includes(item.nickName)
+    //     })
+    //     console.log('选中的陪检员信息', this.checkedEscortInfo)
+    //     this.updateDistributionState()
+    //     // this.getOrderList()
+    //     this.$refs.table.doLayout()
+    //     this.drawer = false
+    //   }
+    // },
     // drawer点击取消
-    cancelForm() {
-      console.log('点击了取消')
-      this.escortForm = ''
-      this.$message({
-        message: '取消分配',
-        type: 'success',
-      })
-      this.drawer = false
-    },
+    // cancelForm() {
+    //   console.log('点击了取消')
+    //   this.escortForm = ''
+    //   this.$message({
+    //     message: '取消分配',
+    //     type: 'success',
+    //   })
+    //   this.drawer = false
+    // },
+    // onSubmit() {
+    //   console.log('submit!')
+    // },
     // deleteOrder() {},
   },
 }
 </script>
 
 <style lang='scss' scoped>
-
+.allot-table{
+  ::v-deep .el-form{
+    grid-template-columns: repeat(2, 1fr)
+  }
+}
 </style>

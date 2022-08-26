@@ -54,6 +54,7 @@ export default {
                 tip: '编辑',
                 type: 'warning',
                 icon: 'el-icon-edit',
+                disabled: true,
                 click: ({ row }) => this.$router.push({
                   name: 'AddUser',
                   query: {
@@ -65,6 +66,7 @@ export default {
               {
                 tip: '删除',
                 type: 'danger',
+                disabled: true,
                 icon: 'el-icon-delete',
                 click: this.delUser,
               },

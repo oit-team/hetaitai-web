@@ -23,3 +23,10 @@ export function editUser(params) {
 export function delUser(params) {
   return post('/system/user/delUser', params)
 }
+
+/**
+ * 获取所有陪检员的信息
+ */
+export function getUserList(params) {
+  return post('/system/user/getUserList', params)
+}

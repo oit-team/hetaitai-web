@@ -29,8 +29,14 @@
               <el-option label="元/时" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="是否提供特定服务" prop="specificServicecheckedServices">
-            <el-input v-model="form.specificService"></el-input>
+          <el-form-item label="是否提供上门服务" prop="specificServicecheckedServices">
+            <el-switch
+              v-model="form.specificService"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="是"
+            >
+            </el-switch>
           </el-form-item>
           <el-form-item label="服务内容" prop="serviceContent">
             <el-checkbox-group v-model="checkedServices">
@@ -151,6 +157,7 @@ export default {
         serviceId: this.id,
       })
       this.form = res.body
+      console.log(this.form)
       this.form.serviceId = this.id
       this.form.serviceObject = JSON.parse(this.form.serviceObject)
       this.form.serviceContent = JSON.parse(this.form.serviceContent)

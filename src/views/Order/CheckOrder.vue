@@ -61,9 +61,9 @@
                 <el-descriptions-item label="联系电话">
                   {{ form.customerPhone }}
                 </el-descriptions-item>
-                <el-descriptions-item label="上门时间">
+                <!-- <el-descriptions-item label="上门时间">
                   {{ form.customerDoorTime }}
-                </el-descriptions-item>
+                </el-descriptions-item> -->
                 <el-descriptions-item label="上门地址">
                   {{ form.customerAddress || '暂无' }}
                 </el-descriptions-item>
@@ -86,7 +86,11 @@
           <div v-else>
             <div v-for="(item, index) in distributionRecords" :key="index" class="mb-4 text-sm">
               <div class="flex">
-                <p class="mr-24">操作人：{{ item.operationId || '无' }}</p><p class="mr-24">接单人：{{ item.distributionId || '无' }}</p>
+                <p class="mr-24">
+                  操作人：{{ item.operationId || '无' }}
+                </p><p class="mr-24">
+                  接单人：{{ item.distributionId || '无' }}
+                </p>
               </div>
               <div v-if="item.operationId && item.distributionId">
                 <p class="mr-24">
@@ -107,6 +111,12 @@
               <div v-if="!item.operationId && !item.distributionId">
                 <p class="mr-24">
                   <span>该订单已超时，返回重新下发！</span>
+                </p>
+              </div>
+              <div v-if="item.remark">
+                <p class="mr-24">
+                  <span>{{ item.distributionId }}</span>在<span>{{ item.completeTime }}</span>拒绝了该下发订单！
+                  <span>原因：{{ item.remark }}</span>
                 </p>
               </div>
               <el-divider class="!my-2" />
@@ -156,14 +166,12 @@ export default {
       this.drawer = true
       this.getDistributionRecords()
     },
-    //
+    // 获取订单分配记录
     async getDistributionRecords() {
       const res = await getDistributionRecords({
         orderNo: this.orderNo,
       })
-      console.log('订单分配记录', res)
       this.distributionRecords = res.body.resultList
-      console.log(this.distributionRecords)
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
