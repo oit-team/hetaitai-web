@@ -120,8 +120,13 @@ export default {
         },
       }).then((res) => {
         this.menuList = res.data.body.resultList
+        this.pushTo(this.menuList[0])
+        this.$emit('menu-loaded')
       })
     },
+    // async getEmnu() {
+
+    // },
     pushTo(item) {
       if (item.fieldDes) {
         sessionStorage.setItem('headTitString', item.fieldDes)

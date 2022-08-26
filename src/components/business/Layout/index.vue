@@ -1,7 +1,7 @@
 <template>
   <el-container class="page-container" direction="vertical">
-    <VcHeader />
-    <el-container class="overflow-hidden">
+    <VcHeader @menu-loaded="menuLoaded = true" />
+    <el-container v-if="menuLoaded" class="overflow-hidden">
       <!-- <VcAside /> -->
       <VcMain class="scrollbar" />
     </el-container>
@@ -15,11 +15,16 @@ import VcMain from './Main'
 
 export default {
   name: 'VcLayout',
+
   components: {
     VcMain,
     // VcAside,
     VcHeader,
   },
+
+  data: () => ({
+    menuLoaded: false,
+  }),
 }
 </script>
 
