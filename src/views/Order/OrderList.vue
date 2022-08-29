@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { getOrderList, updateDistributionState } from '@/api/order'
+import { dictitemInfoAllMethod, getOrderList, updateDistributionState } from '@/api/order'
 import { getUserList } from '@/api/user'
 export default {
   name: 'OrderList',
@@ -75,9 +75,9 @@ export default {
       },
       drawer: false,
       orderNo: '',
-      // checkedEscortInfo: '',
-      // escortForm: {},
-      // escortList: [],
+      orderSatusList: [], // 订单状态列表
+      distributionStateList: [], // 接单状态列表
+      newDistributionStateList: [],
       pageNum: 1,
       pageSize: 20,
 
@@ -87,6 +87,18 @@ export default {
     tablePageOption() {
       return {
         promise: this.getOrderList,
+        search: {
+          fieldProps: {
+            // 订单状态
+            orderState: {
+              options: this.newOrderSatusList,
+            },
+            // 接单状态
+            distributionState: {
+              options: this.newDistributionStateList,
+            },
+          },
+        },
         table: {
           data: this.data.resultList,
           actions: {
@@ -161,7 +173,8 @@ export default {
     },
   },
   created() {
-    this.getOrderList()
+    this.getOrderSatusList()
+    this.getDistributionStateList()
   },
   activated() {
     this.getOrderList()
@@ -169,7 +182,6 @@ export default {
   methods: {
     // 设置下发订单文本域
     setAllotTableField() {
-      console.log(this.$refs.allotTable)
       this.$refs.allotTable.setFields([{
         fieldKey: 'nickName',
         fieldName: '真实姓名',
@@ -185,7 +197,38 @@ export default {
         fieldName: '接单状态',
         fieldType: '文本',
         noSearchShow: true,
+      },
+      {
+        fieldKey: 'workingStateName',
+        fieldName: '上班状态',
+        fieldType: '文本',
+        noSearchShow: true,
       }])
+    },
+
+    // 根据字典项查询订单状态
+    async getOrderSatusList() {
+      const res = await dictitemInfoAllMethod({
+        type: 'ORDER_STATE',
+      })
+      this.orderSatusList = res.body.result
+      this.newOrderSatusList = this.orderSatusList.map(item => ({
+        optionKey: item.dictitemCode,
+        optionValue: item.remark,
+      }))
+    },
+
+    // 根据字典项查询接单状态
+    async getDistributionStateList() {
+      const res = await dictitemInfoAllMethod({
+        type: 'DISTRIBUTION_STATE',
+      })
+      this.distributionStateList = res.body.result
+
+      this.newDistributionStateList = this.distributionStateList.map(item => ({
+        optionKey: item.dictitemCode,
+        optionValue: item.remark,
+      }))
     },
 
     // 查询订单列表
@@ -196,10 +239,12 @@ export default {
       })
       this.data = res.body
     },
+
     // 下发按钮是否禁用
     isDisabled({ row }) {
       return !(row.distributionState === '未分配' && row.orderState === '待分配' && this.$store.state.userInfo.userType === 1)
     },
+
     // 点击下发订单按钮
     allocationOrder({ row }) {
       this.orderNo = row.orderNo
@@ -237,34 +282,6 @@ export default {
         })
       }
     },
-    // drawer点击确定
-    // confirm() {
-    //   console.log('点击了确定')
-    //   if (this.escortForm.nickName) {
-    //     this.checkedEscortInfo = this.escortList.filter((item) => {
-    //       return this.escortForm.nickName.includes(item.nickName)
-    //     })
-    //     console.log('选中的陪检员信息', this.checkedEscortInfo)
-    //     this.updateDistributionState()
-    //     // this.getOrderList()
-    //     this.$refs.table.doLayout()
-    //     this.drawer = false
-    //   }
-    // },
-    // drawer点击取消
-    // cancelForm() {
-    //   console.log('点击了取消')
-    //   this.escortForm = ''
-    //   this.$message({
-    //     message: '取消分配',
-    //     type: 'success',
-    //   })
-    //   this.drawer = false
-    // },
-    // onSubmit() {
-    //   console.log('submit!')
-    // },
-    // deleteOrder() {},
   },
 }
 </script>

@@ -7,7 +7,7 @@
           <el-input v-model="form.userPhone" prefix-icon="el-icon-s-custom"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="form.password" prefix-icon="el-icon-lock" @change="login"></el-input>
+          <el-input v-model="form.password" show-password prefix-icon="el-icon-lock" @change="login"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="w-full" @click="login">

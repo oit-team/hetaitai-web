@@ -19,3 +19,12 @@ export function getDistributionRecords(params) {
 export function updateDistributionState(params) {
   return post('/order/orderInfo/updateDistributionState', params)
 }
+
+/**
+ * 根据字典项查询接单状态和订单状态
+ */
+export function dictitemInfoAllMethod(params) {
+  return post('/goods/dictitemInfo/dictitemInfoAllMethod', params, {
+    cmd: 100009,
+  })
+}

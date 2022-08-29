@@ -22,7 +22,7 @@ export default {
       resultList: {},
       formData: {
         userPhone: '',
-        userType: 2,
+        userType: '',
         sex: '',
         state: '',
         pageNum: 1,

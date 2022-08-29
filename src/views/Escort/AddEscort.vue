@@ -15,13 +15,13 @@
             <el-input v-model="form.userPhone"></el-input>
           </el-form-item>
           <el-form-item label="性别" prop="sex">
-            <el-select v-model="form.sex" placeholder="性别">
+            <el-select v-model="form.sex" placeholder="请选择性别">
               <el-option label="男" :value="0"></el-option>
               <el-option label="女" :value="1"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="用户类型" prop="userType">
-            <el-select v-model="form.userType" placeholder="用户类型">
+            <el-select v-model="form.userType" placeholder="请选择用户类型">
               <el-option label="管理" :value="1"></el-option>
               <el-option label="陪诊陪检人员" :value="2"></el-option>
             </el-select>
@@ -65,6 +65,9 @@ export default {
         userPhone: [
           { required: true, message: '请输入正确联系电话且长度11位数字', trigger: 'blur' },
         ],
+        userType: [
+          { required: true, message: '请输入用户类型', trigger: 'change' },
+        ],
       },
     }
   },
@@ -99,11 +102,17 @@ export default {
         nickName: this.form.nickName,
         address: this.form.address,
       })
-      this.$refs.table.getEscortList()
-      this.$message({
-        message: res.head.msg,
-        type: 'success',
-      })
+      if (res.head.status === 0) {
+        this.$message({
+          message: res.head.msg,
+          type: 'success',
+        })
+      } else {
+        this.$message({
+          message: res.head.msg,
+          type: 'warning',
+        })
+      }
     },
     // 编辑陪诊员信息
     async editEscortList() {
@@ -115,7 +124,6 @@ export default {
         nickName: this.form.nickName,
         address: this.form.address,
       })
-      this.$refs.table.getEscortList()
       this.$message({
         message: res.head.msg,
         type: 'success',

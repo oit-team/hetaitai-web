@@ -54,7 +54,6 @@ export default {
     },
   },
   created() {
-    this.getServicesList()
   },
   methods: {
     // 获取服务列表

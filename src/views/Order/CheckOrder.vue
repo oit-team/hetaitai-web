@@ -86,9 +86,9 @@
           <div v-else>
             <div v-for="(item, index) in distributionRecords" :key="index" class="mb-4 text-sm">
               <div class="flex">
-                <p class="mr-24">
+                <p class="mr-20">
                   操作人：{{ item.operationId || '无' }}
-                </p><p class="mr-24">
+                </p><p class="mr-20">
                   接单人：{{ item.distributionId || '无' }}
                 </p>
               </div>

@@ -15,7 +15,7 @@
             <el-input v-model="form.serviceDescription"></el-input>
           </el-form-item>
           <el-form-item label="服务类型" prop="serviceType">
-            <el-select v-model="form.serviceType" placeholder="服务类型">
+            <el-select v-model="form.serviceType" placeholder="请选择服务类型">
               <el-option label="陪诊" :value="1"></el-option>
               <el-option label="陪检" :value="2"></el-option>
             </el-select>
@@ -24,17 +24,18 @@
             <el-input v-model="form.servicePrice"></el-input>
           </el-form-item>
           <el-form-item label="服务价格单位" prop="servicePriceUnit">
-            <el-select v-model="form.servicePriceUnit" placeholder="服务价格单位">
+            <el-select v-model="form.servicePriceUnit" placeholder="请选择服务价格单位">
               <el-option label="元/次" :value="1"></el-option>
               <el-option label="元/时" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="是否提供上门服务" prop="specificServicecheckedServices">
+          <el-form-item label="是否上门接送" prop="specificServicecheckedServices">
             <el-switch
               v-model="form.specificService"
               :active-value="1"
               :inactive-value="0"
               active-text="是"
+              inactive-text="否"
             >
             </el-switch>
           </el-form-item>
@@ -157,7 +158,6 @@ export default {
         serviceId: this.id,
       })
       this.form = res.body
-      console.log(this.form)
       this.form.serviceId = this.id
       this.form.serviceObject = JSON.parse(this.form.serviceObject)
       this.form.serviceContent = JSON.parse(this.form.serviceContent)
