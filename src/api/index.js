@@ -41,7 +41,7 @@ export function post(url, params = {}, config = {}) {
       cmd: config.cmd,
       ver: '1.0',
       ln: 'cn',
-      mod: 'app',
+      mod: 'home',
       de: '2019-10-16',
       sync: 1,
       uuid: userData.brandId,
