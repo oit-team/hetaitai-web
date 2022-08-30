@@ -274,7 +274,7 @@ export default {
         message: '分配成功!',
         type: 'success',
       })
-      this.$refs.allotTable.loadData()
+      this.$refs.table.loadData()
       this.drawer = false
     },
   },
