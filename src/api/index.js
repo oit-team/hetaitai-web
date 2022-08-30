@@ -3,7 +3,6 @@ import axios from 'axios'
 import { ApiError } from '@oit/api-error'
 import { Message } from 'element-ui'
 import store from '../store'
-import API_SERVICE from './enum/API_SERVICE'
 import API_STATUS from './enum/API_STATUS'
 
 const axiosInstance = axios.create({
@@ -54,15 +53,6 @@ export function post(url, params = {}, config = {}) {
     .post(url, params, config)
     .then(res => res.data)
 }
-
-/**
- * 创建拼接请求服务的请求函数
- */
-Object.values(API_SERVICE).forEach((service) => {
-  post[service] = function (url, params, config) {
-    return post(`/${service}${url}`, params, config)
-  }
-})
 
 Vue.config.errorHandler = (err, vm, info) => {
   console.error(err)

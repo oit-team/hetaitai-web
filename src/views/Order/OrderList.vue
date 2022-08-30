@@ -177,6 +177,8 @@ export default {
     this.getDistributionStateList()
   },
   activated() {
+    this.$refs.table.loadData()
+    this.$refs.allotTable.loadData()
     this.getOrderList()
   },
   methods: {
@@ -263,24 +265,17 @@ export default {
     },
     // 分配陪检员
     async updateDistributionState({ row }) {
-      const res = await updateDistributionState({
+      await updateDistributionState({
         distributionState: '2',
         orderNo: this.orderNo,
         distributionId: row.userId,
       })
-      if (res.head.status === 0) {
-        this.$refs.allotTable.loadData()
-        this.$message({
-          message: '分配成功!',
-          type: 'success',
-        })
-        this.drawer = false
-      } else {
-        this.$message({
-          message: res.head.msg,
-          type: 'warning',
-        })
-      }
+      this.$message({
+        message: '分配成功!',
+        type: 'success',
+      })
+      this.$refs.allotTable.loadData()
+      this.drawer = false
     },
   },
 }

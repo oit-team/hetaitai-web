@@ -197,31 +197,26 @@ export default {
     },
     // 修改服务
     async updateServices() {
-      const res = await updateServices({
+      await updateServices({
         ...this.form,
       })
       this.$message({
-        message: res.head.msg,
+        message: '修改成功!',
         type: 'success',
       })
     },
     // 提交
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.form.serviceContent = this.serviceContentList.filter((item) => {
-            return this.checkedServices.includes(item.remark)
-          })
-          if (this.editFlag) {
-            //
-          } else {
-            this.updateServices()
-          }
-          this.$router.back()
-        } else {
-          return false
-        }
+    async submitForm(formName) {
+      await this.$refs[formName].validate()
+      this.form.serviceContent = this.serviceContentList.filter((item) => {
+        return this.checkedServices.includes(item.remark)
       })
+      if (this.editFlag) {
+        // 新增
+      } else {
+        await this.updateServices()
+      }
+      this.$router.back()
     },
     // 重置
     resetForm(formName) {

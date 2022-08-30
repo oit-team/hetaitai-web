@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import { addUser, editUser, getUserById } from '@/api/user'
+import { getUserById } from '@/api/user'
+// import { addUser, editUser } from '@/api/user'
 export default {
   name: 'AddEscort',
   data() {
@@ -56,7 +57,7 @@ export default {
       rules: {
         nickName: [
           { message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 10, message: '长度在 2 到 10 个汉字', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个汉字或字母', trigger: 'blur' },
         ],
         userPhone: [
           { message: '请输入联系电话', trigger: 'blur' },
@@ -105,35 +106,26 @@ export default {
     // },
 
     // 编辑用户信息
-    async editUser() {
-      const res = await editUser({
-        userId: this.form.id,
-        userPhone: this.form.userPhone,
-        userType: this.form.userType,
-        sex: this.form.sex,
-        nickName: this.form.nickName,
-        address: this.form.address,
-      })
-      this.$message({
-        message: res.head.msg,
-        type: 'success',
-      })
-      this.$refs.table.getUsers()
-    },
+    // async editUser() {
+    //   const res = await editUser({
+    //     userId: this.form.id,
+    //     userPhone: this.form.userPhone,
+    //     userType: this.form.userType,
+    //     sex: this.form.sex,
+    //     nickName: this.form.nickName,
+    //     address: this.form.address,
+    //   })
+    //   this.$message({
+    //     message: res.head.msg,
+    //     type: 'success',
+    //   })
+    //   this.$refs.table.getUsers()
+    // },
     // 提交
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (!this.isEdit) {
-            // this.addUser()
-          } else {
-            this.editUser()
-          }
-          this.$router.back()
-        } else {
-          return false
-        }
-      })
+    async submitForm(formName) {
+      await this.$refs[formName].validate()
+      await (!this.isEdit ? this.addUser() : this.editUser())
+      this.$router.back()
     },
     // 重置
     resetForm(formName) {

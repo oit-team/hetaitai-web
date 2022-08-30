@@ -60,7 +60,7 @@ export default {
       rules: {
         nickName: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
-          { min: 2, max: 10, message: '长度在 2 到 10 个汉字', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个汉子或英文', trigger: 'blur' },
         ],
         userPhone: [
           { required: true, message: '请输入正确联系电话且长度11位数字', trigger: 'blur' },
@@ -94,7 +94,7 @@ export default {
     },
     // 新增陪诊员
     async addEscortList() {
-      const res = await addEscortList({
+      await addEscortList({
         userPhone: this.form.userPhone,
         password: CryptoJS.encrypt(this.form.password),
         userType: this.form.userType,
@@ -102,21 +102,14 @@ export default {
         nickName: this.form.nickName,
         address: this.form.address,
       })
-      if (res.head.status === 0) {
-        this.$message({
-          message: res.head.msg,
-          type: 'success',
-        })
-      } else {
-        this.$message({
-          message: res.head.msg,
-          type: 'warning',
-        })
-      }
+      this.$message({
+        message: '新增成功!',
+        type: 'success',
+      })
     },
     // 编辑陪诊员信息
     async editEscortList() {
-      const res = await editEscortList({
+      await editEscortList({
         userId: this.form.id,
         userPhone: this.form.userPhone,
         userType: this.form.userType,
@@ -125,24 +118,15 @@ export default {
         address: this.form.address,
       })
       this.$message({
-        message: res.head.msg,
+        message: '修改成功!',
         type: 'success',
       })
     },
     // 提交
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          if (this.editFlag) {
-            this.addEscortList()
-          } else {
-            this.editEscortList()
-          }
-          this.$router.back()
-        } else {
-          return false
-        }
-      })
+    async submitForm(formName) {
+      await this.$refs[formName].validate()
+      await (this.editFlag ? this.addEscortList() : this.editEscortList())
+      this.$router.back()
     },
     // 重置
     resetForm(formName) {
