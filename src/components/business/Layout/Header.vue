@@ -3,11 +3,6 @@
     <div class="system">
       <el-avatar style="width: 40px; height: 40px" src="https://picsum.photos/40" />
       <span class="system-name">禾太太管理系统</span>
-      <!-- <i
-        class="collapse-btn"
-        :class="$store.state.aside.collapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'"
-        @click="$store.commit('aside/switchCollapse')"
-      ></i> -->
     </div>
 
     <el-menu class="scrollbar" :default-active="activeIndex" mode="horizontal" router>
@@ -20,37 +15,6 @@
       >
         {{ item.menuName }}
       </el-menu-item>
-      <!-- <el-menu-item index="4" route="user/userList">
-        用户管理
-      </el-menu-item>
-      <el-submenu index="2">
-        <template slot="title">
-          我的工作台
-        </template>
-        <el-menu-item index="2-1">
-          选项1
-        </el-menu-item>
-        <el-menu-item index="2-2">
-          选项2
-        </el-menu-item>
-        <el-menu-item index="2-3">
-          选项3
-        </el-menu-item>
-        <el-submenu index="2-4">
-          <template slot="title">
-            选项4
-          </template>
-          <el-menu-item index="2-4-1">
-            选项1
-          </el-menu-item>
-          <el-menu-item index="2-4-2">
-            选项2
-          </el-menu-item>
-          <el-menu-item index="2-4-3">
-            选项3
-          </el-menu-item>
-        </el-submenu>
-      </el-submenu> -->
     </el-menu>
 
     <div class="account">
@@ -69,14 +33,13 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { getTreeMenuList } from '@/api/common'
 
 export default {
   name: 'VcHeader',
   data: () => ({
     activeIndex: '1',
     menuList: [],
-    // pageTo: '',
   }),
   watch: {
     menuList(newData) {
@@ -85,11 +48,12 @@ export default {
         MenuStatus[item.menuCode] = ''
       })
       sessionStorage.MenuStatus = JSON.stringify(MenuStatus)
-      this.activeIndex = `${newData[0].menuId}`
+      const current = this.menuList.find(item => item.menuUrl === this.$route.path)
+      this.activeIndex = `${current?.menuId}`
     },
   },
   created() {
-    this.getEmnu()
+    this.getTreeMenuList()
   },
   methods: {
     // 退出登录
@@ -101,32 +65,12 @@ export default {
         })
       }
     },
-    async getEmnu() {
-      await axios({
-        url: '/api/system/menu/getTreeMenuList',
-        method: 'post',
-        data: {
-          head: {
-            aid: localStorage.getItem('userId'),
-            ver: '1.0',
-            ln: 'cn',
-            cmd: 10008,
-            mod: 'app',
-            de: '2019-10-16',
-            sync: 1,
-            chcode: 'ef19843298ae8f2134f',
-          },
-          con: {},
-        },
-      }).then((res) => {
-        this.menuList = res.data.body.resultList
-        this.pushTo(this.menuList[0])
-        this.$emit('menu-loaded')
-      })
+    async getTreeMenuList() {
+      const res = await getTreeMenuList()
+      this.menuList = res.body.resultList
+      this.pushTo(this.menuList.find(item => item.menuUrl === this.$route.path))
+      this.$emit('menu-loaded')
     },
-    // async getEmnu() {
-
-    // },
     pushTo(item) {
       if (item.fieldDes) {
         sessionStorage.setItem('headTitString', item.fieldDes)
