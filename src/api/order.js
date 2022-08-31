@@ -8,7 +8,7 @@ export function getOrderList(params) {
 }
 
 export function getCustomerOrderById(params) {
-  return post('/order/orderInfo/getCustomerOrderById', params)
+  return post('/order/orderInfo/getOrderById', params)
 }
 
 export function getDistributionRecords(params) {

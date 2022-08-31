@@ -14,34 +14,34 @@
             </el-button>
           </template>
           <el-descriptions-item label="下单人">
-            {{ form.orderUser }}
+            {{ form.orderUser || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="陪诊人">
-            {{ form.escortId }}
+            {{ form.escortId || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="订单编号">
-            {{ form.orderNo }}
+            {{ form.orderNo || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="上门金额">
-            {{ form.specificMoney }}
+            {{ form.specificMoney || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="服务金额">
-            {{ form.orderMoney }}
+            {{ form.orderMoney || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="订单总金额">
-            {{ form.orderTotalMoney }}
+            {{ form.orderTotalMoney || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="下单时间">
-            {{ form.orderTime }}
+            {{ form.orderTime || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="订单状态">
             <el-tag size="small">
-              {{ form.orderState }}
+              {{ form.orderState || '暂无' }}
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="接单状态">
             <el-tag size="small">
-              {{ form.orderState }}
+              {{ form.orderState || '暂无' }}
             </el-tag>
           </el-descriptions-item>
           <el-descriptions-item label="订单备注">
@@ -56,10 +56,10 @@
             <div class="text item">
               <el-descriptions class="margin-top" :column="3" :size="size">
                 <el-descriptions-item label="客户姓名">
-                  {{ form.customerName }}
+                  {{ form.customerName || '暂无' }}
                 </el-descriptions-item>
                 <el-descriptions-item label="联系电话">
-                  {{ form.customerPhone }}
+                  {{ form.customerPhone || '暂无' }}
                 </el-descriptions-item>
                 <!-- <el-descriptions-item label="上门时间">
                   {{ form.customerDoorTime }}
@@ -74,7 +74,7 @@
         </div>
       </el-main>
       <el-drawer
-        title="订单分配日志"
+        title="订单分配记录"
         :visible.sync="drawer"
         :direction="direction"
         :before-close="handleClose"
@@ -87,35 +87,27 @@
             <div v-for="(item, index) in distributionRecords" :key="index" class="mb-4 text-sm">
               <div class="flex">
                 <p class="mr-20">
-                  操作人：{{ item.operationId || '无' }}
+                  操作人：{{ item.operationId || '暂无' }}
                 </p><p class="mr-20">
-                  接单人：{{ item.distributionId || '无' }}
+                  接单人：{{ item.distributionId || '暂无' }}
                 </p>
               </div>
-              <div v-if="item.operationId && item.distributionId">
+              <div>
                 <p class="mr-24">
-                  <span>分配订单前：</span><span class="text-red-600">{{ JSON.parse(item.stateChange).oldState }}</span>
+                  <span>当前订单状态：</span><span class="text-red-600">{{ item.stateChange || '暂无' }}</span>
                 </p>
                 <p class="mr-24">
-                  <span>分配订单后：</span><span class="text-blue-500">{{ JSON.parse(item.stateChange).newState }}</span>
+                  <span>分配时间：</span>{{ item.distributionTime || '暂无' }}
                 </p>
                 <p class="mr-24">
-                  <span>订单分配时间：</span>{{ item.distributionTime }}
+                  <span>操作时间：</span>{{ item.operationTime || '暂无' }}
                 </p>
-              </div>
-              <div v-if="item.operationId && !item.distributionId">
                 <p class="mr-24">
-                  <span>{{ item.distributionId }}</span>在<span>{{ item.completeTime }}</span>接受了该下发订单！
-                </p>
-              </div>
-              <div v-if="!item.operationId && !item.distributionId">
-                <p class="mr-24">
-                  <span>该订单已超时，返回重新下发！</span>
+                  <span>接单时间：</span>{{ item.completeTime || '暂无' }}
                 </p>
               </div>
               <div v-if="item.remark">
                 <p class="mr-24">
-                  <span>{{ item.distributionId }}</span>在<span>{{ item.completeTime }}</span>拒绝了该下发订单！
                   <span>原因：{{ item.remark }}</span>
                 </p>
               </div>
@@ -172,6 +164,7 @@ export default {
         orderNo: this.orderNo,
       })
       this.distributionRecords = res.body.resultList
+      console.log(this.distributionRecords)
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
