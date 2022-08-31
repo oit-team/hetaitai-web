@@ -96,7 +96,7 @@ export default {
     async addEscortList() {
       await addEscortList({
         userPhone: this.form.userPhone,
-        password: CryptoJS.encrypt(this.form.password),
+        password: this.form.password && CryptoJS.encrypt(this.form.password),
         userType: this.form.userType,
         sex: this.form.sex,
         nickName: this.form.nickName,
