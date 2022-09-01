@@ -4,25 +4,8 @@
       <div id="customerList" class="pageCommonStyle h-full flex flex-col">
         <TablePage v-bind="tablePageOption" ref="table" auto>
           <template #content:orderState="{ row }">
-            <el-tag v-if="row.orderState === '未支付'" type="danger">
+            <el-tag :type="getStateColor(row.orderStateKey, 'order')">
               {{ row.orderState }}
-            </el-tag>
-            <el-tag v-if="row.orderState === '待分配'" type="warning">
-              {{ row.orderState }}
-            </el-tag>
-            <el-tag v-if="row.orderState === '服务中'" type="success">
-              {{ row.orderState }}
-            </el-tag>
-          </template>
-          <template #content:distributionState="{ row }">
-            <el-tag v-if="row.distributionState === '未分配'" type="danger">
-              {{ row.distributionState }}
-            </el-tag>
-            <el-tag v-if="row.distributionState === '已分配'" type="warning">
-              {{ row.distributionState }}
-            </el-tag>
-            <el-tag v-if="row.distributionState === '已接单'" type="success">
-              {{ row.distributionState }}
             </el-tag>
           </template>
         </TablePage>
@@ -38,15 +21,9 @@
     >
       <div class="h-full flex flex-col py-3 px-4">
         <TablePage v-bind="allotTablePageOption" ref="allotTable" class="allot-table">
-          <template #content:distributionState="{ row }">
-            <el-tag v-if="row.distributionState === '未分配'" type="danger">
-              {{ row.distributionState }}
-            </el-tag>
-            <el-tag v-if="row.distributionState === '已分配'" type="warning">
-              {{ row.distributionState }}
-            </el-tag>
-            <el-tag v-if="row.distributionState === '已接单'" type="success">
-              {{ row.distributionState }}
+          <template #content:userServiceStateName="{ row }">
+            <el-tag :type="getStateColor(row.userServiceState, 'service')">
+              {{ row.userServiceStateName }}
             </el-tag>
           </template>
         </TablePage>
@@ -58,10 +35,43 @@
 <script>
 import { dictitemInfoAllMethod, getOrderList, updateDistributionState } from '@/api/order'
 import { getUserList } from '@/api/user'
+
+// 订单状态
+const ORDER_STATE = {
+  // 待支付
+  PENDING_PAY: 1,
+  // 待分配
+  UNASSIGNED: 2,
+  // 服务中
+  SERVING: 3,
+  // 已完成
+  COMPLETED: 4,
+  // 已取消
+  CANCELLED: 5,
+  // 已退款
+  REFUNDED: 6,
+}
+
+// 接单状态
+const SERVICE_STATE = {
+  // 待接单
+  PENDING_ORDER: 1,
+  // 已接单
+  RECEIVED: 2,
+  // 已完成
+  COMPLETED: 3,
+  /// 已取消
+  TIMEOUT: 4,
+}
+
 export default {
   name: 'OrderList',
   data: () => {
     return {
+      ORDER_STATE,
+      SERVICE_STATE,
+      drawer: false,
+
       data: {},
       allotData: {},
       formData: {
@@ -73,7 +83,6 @@ export default {
         orderState: '',
         distributionState: '',
       },
-      drawer: false,
       orderNo: '',
       orderSatusList: [], // 订单状态列表
       distributionStateList: [], // 接单状态列表
@@ -139,7 +148,7 @@ export default {
                 type: 'danger',
                 icon: 'el-icon-delete',
                 disabled: true,
-                click: ({ row }) => this.deleteOrder,
+                click: this.deleteOrder,
               },
             ],
           },
@@ -155,7 +164,7 @@ export default {
         table: {
           data: this.allotData.resultList,
           actions: {
-            width: 160,
+            width: 100,
             buttons: [
               {
                 tip: '分配',
@@ -182,6 +191,30 @@ export default {
     this.getOrderList()
   },
   methods: {
+    getStateColor(state, type) {
+      let map = {}
+
+      if (type === 'order') {
+        map = {
+          danger: [ORDER_STATE.PENDING_PAY, ORDER_STATE.UNASSIGNED],
+          success: [ORDER_STATE.COMPLETED, ORDER_STATE.SERVING],
+          warning: [ORDER_STATE.CANCELLED, ORDER_STATE.REFUNDED],
+        }
+      } else {
+        map = {
+          danger: [SERVICE_STATE.PENDING_ORDER],
+          success: [SERVICE_STATE.COMPLETED, SERVICE_STATE.RECEIVED],
+          warning: [SERVICE_STATE.TIMEOUT],
+        }
+      }
+
+      let color = ''
+      Object.entries(map).forEach(([k, v]) => {
+        if (v.includes(state)) color = k
+      })
+
+      return color
+    },
     // 设置下发订单文本域
     setAllotTableField() {
       this.$refs.allotTable.setFields([{
@@ -244,7 +277,7 @@ export default {
 
     // 下发按钮是否禁用
     isDisabled({ row }) {
-      return !(row.distributionState === '未分配' && row.orderState === '待分配' && this.$store.state.userInfo.userType === 1)
+      return !(row.isSend === 1 && row.orderStateKey === 2)
     },
 
     // 点击下发订单按钮
@@ -266,7 +299,7 @@ export default {
     // 分配陪检员
     async updateDistributionState({ row }) {
       await updateDistributionState({
-        distributionState: '2',
+        distributionState: '1',
         orderNo: this.orderNo,
         distributionId: row.userId,
       })

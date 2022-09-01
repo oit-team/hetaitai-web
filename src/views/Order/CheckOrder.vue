@@ -35,15 +35,15 @@
             {{ form.orderTime || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="订单状态">
-            <el-tag size="small">
+            <el-tag size="small" :type="getStateColor(form.orderStateKey)">
               {{ form.orderState || '暂无' }}
             </el-tag>
           </el-descriptions-item>
-          <el-descriptions-item label="接单状态">
+          <!-- <el-descriptions-item label="接单状态">
             <el-tag size="small">
               {{ form.orderState || '暂无' }}
             </el-tag>
-          </el-descriptions-item>
+          </el-descriptions-item> -->
           <el-descriptions-item label="订单备注">
             暂无
           </el-descriptions-item>
@@ -122,10 +122,29 @@
 
 <script>
 import { getCustomerOrderById, getDistributionRecords } from '@/api/order'
+
+// 订单状态
+const ORDER_STATE = {
+  // 待支付
+  PENDING_PAY: 1,
+  // 待分配
+  UNASSIGNED: 2,
+  // 服务中
+  SERVING: 3,
+  // 已完成
+  COMPLETED: 4,
+  // 已取消
+  CANCELLED: 5,
+  // 已退款
+  REFUNDED: 6,
+}
+
 export default {
   name: 'CheckOrder',
   data() {
     return {
+      ORDER_STATE,
+
       size: '',
       isEdit: '',
       form: {},
@@ -146,6 +165,20 @@ export default {
   activated() {
   },
   methods: {
+    getStateColor(state) {
+      const map = {
+        danger: [ORDER_STATE.PENDING_PAY, ORDER_STATE.UNASSIGNED],
+        success: [ORDER_STATE.COMPLETED, ORDER_STATE.SERVING],
+        warning: [ORDER_STATE.CANCELLED, ORDER_STATE.REFUNDED],
+      }
+
+      let color = ''
+      Object.entries(map).forEach(([k, v]) => {
+        if (v.includes(state)) color = k
+      })
+
+      return color
+    },
     // 查询用户详情
     async getCustomerOrderById() {
       const res = await getCustomerOrderById({
@@ -164,7 +197,6 @@ export default {
         orderNo: this.orderNo,
       })
       this.distributionRecords = res.body.resultList
-      console.log(this.distributionRecords)
     },
     handleClose(done) {
       this.$confirm('确认关闭？')

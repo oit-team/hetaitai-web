@@ -165,14 +165,14 @@ export default {
         this.checkedServices.push(item.remark)
       })
     },
-    // 根据字典项查询服务内容 serviceContent
+    // 根据字典项查询服务内容
     async dictitemServiceInfo() {
       const res = await dictitemServiceInfo({
         type: 'SERVICE_CONTENT',
       })
       this.serviceContentList = res.body.result
     },
-    // 删除tag--删除了的value
+    // 删除tag
     handleClose(tag) {
       this.form.serviceObject.splice(this.form.serviceObject.indexOf(tag), 1)
     },
