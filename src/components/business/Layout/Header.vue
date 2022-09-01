@@ -5,13 +5,12 @@
       <span class="system-name">禾太太管理系统</span>
     </div>
 
-    <el-menu class="scrollbar" :default-active="activeIndex" mode="horizontal" router>
+    <el-menu class="scrollbar" :default-active="activeIndex" mode="horizontal" router @select="activeIndex = $event">
       <el-menu-item
         v-for="(item, index) in menuList"
         :key="index"
         :index="item.menuId"
         :route="item.menuUrl"
-        @click="pushTo(item)"
       >
         {{ item.menuName }}
       </el-menu-item>
@@ -48,11 +47,18 @@ export default {
         MenuStatus[item.menuCode] = ''
       })
       sessionStorage.MenuStatus = JSON.stringify(MenuStatus)
+      const current = this.menuList.find(item => item.menuUrl === this.$route.path) ?? this.menuList[0]
+      this.setTab(current)
+    },
+    $route() {
       const current = this.menuList.find(item => item.menuUrl === this.$route.path)
-      this.activeIndex = `${current?.menuId}`
+      this.setTab(current)
     },
   },
   created() {
+    this.getTreeMenuList()
+  },
+  mounted() {
     this.getTreeMenuList()
   },
   methods: {
@@ -68,11 +74,11 @@ export default {
     async getTreeMenuList() {
       const res = await getTreeMenuList()
       this.menuList = res.body.resultList
-      this.pushTo(this.menuList.find(item => item.menuUrl === this.$route.path))
       this.$emit('menu-loaded')
     },
-    pushTo(item) {
-      if (item.fieldDes) {
+    setTab(item) {
+      if (item?.menuId) {
+        this.activeIndex = item.menuId
         sessionStorage.setItem('headTitString', item.fieldDes)
       }
     },
