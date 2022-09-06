@@ -4,6 +4,7 @@ import { ApiError } from '@oit/api-error'
 import { Message } from 'element-ui'
 import store from '../store'
 import API_STATUS from './enum/API_STATUS'
+import router from '@/router'
 
 const axiosInstance = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
@@ -28,6 +29,17 @@ axiosInstance.interceptors.response.use((response) => {
   }
   return response
 }, async (error) => {
+  if (error.response?.status === API_STATUS.MISSING || error.response?.status === API_STATUS.DELAYED) {
+    Vue.prototype.$message({
+      message: '会话超时,已注销,请重新登录',
+      type: 'warning',
+    })
+    sessionStorage.clear()
+    localStorage.clear()
+    router.replace({
+      path: '/login',
+    })
+  }
   return Promise.reject(new ApiError({ error }))
 })
 
@@ -55,7 +67,6 @@ export function post(url, params = {}, config = {}) {
 }
 
 Vue.config.errorHandler = (err, vm, info) => {
-  console.error(err)
   // 处理接口错误
   if (err instanceof ApiError) {
     // 输出提示消息
