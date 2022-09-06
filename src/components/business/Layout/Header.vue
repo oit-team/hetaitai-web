@@ -51,8 +51,7 @@ export default {
       this.setTab(current)
     },
     $route() {
-      const current = this.menuList.find(item => item.menuUrl === this.$route.path)
-      this.setTab(current)
+      this.setCurrentTab()
     },
   },
   created() {
@@ -74,7 +73,12 @@ export default {
     async getTreeMenuList() {
       const res = await getTreeMenuList()
       this.menuList = res.body.resultList
+      this.setCurrentTab()
       this.$emit('menu-loaded')
+    },
+    setCurrentTab() {
+      const current = this.menuList.find(item => item.menuUrl.toLowerCase() === this.$route.path.toLowerCase())
+      this.setTab(current)
     },
     setTab(item) {
       if (item?.menuId) {

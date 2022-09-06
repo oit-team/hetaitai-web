@@ -53,8 +53,6 @@ export default {
       }
     },
   },
-  created() {
-  },
   methods: {
     // 获取服务列表
     async getServicesList(params) {

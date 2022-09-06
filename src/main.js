@@ -12,7 +12,7 @@ import 'windi.css'
 
 Vue.config.productionTip = false
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || '禾太太'
+  document.title = '禾太太'
   if (to.name) {
     next()
   } else {
