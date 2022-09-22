@@ -77,7 +77,6 @@
         title="订单分配记录"
         :visible.sync="drawer"
         :direction="direction"
-        :before-close="handleClose"
       >
         <div class="py-3 px-4">
           <div v-if="distributionRecords.length === 0">
@@ -197,13 +196,6 @@ export default {
         orderNo: this.orderNo,
       })
       this.distributionRecords = res.body.resultList
-    },
-    handleClose(done) {
-      this.$confirm('确认关闭？')
-        .then((_) => {
-          done()
-        })
-        .catch((_) => {})
     },
   },
 }

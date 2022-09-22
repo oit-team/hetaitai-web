@@ -159,7 +159,7 @@ export default {
       })
       this.form = res.body
       this.form.serviceId = this.id
-      this.form.serviceObject = JSON.parse(this.form.serviceObject)
+      this.form.serviceObject = this.form.serviceObject ? JSON.parse(this.form.serviceObject) : []
       this.form.serviceContent = JSON.parse(this.form.serviceContent)
       this.form.serviceContent.forEach((item) => {
         this.checkedServices.push(item.remark)
