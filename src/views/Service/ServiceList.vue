@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { getServicesList } from '@/api/service'
+import { dictitemInfoAllMethod, getServicesList } from '@/api/service'
 
 export default {
   name: 'ServiceList',
@@ -25,12 +25,21 @@ export default {
         pageSize: 20,
       },
       resultList: [],
+      serviceTypeList: [],
     }
   },
   computed: {
     tablePageOption() {
       return {
         promise: this.getServicesList,
+        search: {
+          fieldProps: {
+            // 服务类型
+            serviceType: {
+              options: this.newServiceTypeList,
+            },
+          },
+        },
         table: {
           data: this.data.resultList,
           actions: {
@@ -53,6 +62,9 @@ export default {
       }
     },
   },
+  mounted() {
+    this.getServiceTypeList()
+  },
   methods: {
     // 获取服务列表
     async getServicesList(params) {
@@ -62,6 +74,17 @@ export default {
       })
       this.data = res.body
       this.$refs.table.doLayout()
+    },
+    // 根据字典项查询订单状态
+    async getServiceTypeList() {
+      const res = await dictitemInfoAllMethod({
+        type: 'SERVICE_TYPE',
+      })
+      this.serviceTypeList = res.body.result
+      this.newServiceTypeList = this.serviceTypeList.map(item => ({
+        optionKey: item.dictitemCode,
+        optionValue: item.remark,
+      }))
     },
   },
 }

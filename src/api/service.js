@@ -18,4 +18,12 @@ export function updateServices(params) {
 export function deleteServices(params) {
   return post('/goods/serviceInfo/deleteService ', params)
 }
+/**
+ * 根据字典项查询服务类型
+ */
+export function dictitemInfoAllMethod(params) {
+  return post('/goods/dictitemInfo/dictitemInfoAllMethod', params, {
+    cmd: 100009,
+  })
+}
 
