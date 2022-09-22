@@ -11,6 +11,9 @@
           <el-form-item label="服务名称" prop="serviceName">
             <el-input v-model="form.serviceName"></el-input>
           </el-form-item>
+          <el-form-item label="服务标题" prop="serviceName">
+            <el-input v-model="form.serviceTitle"></el-input>
+          </el-form-item>
           <el-form-item label="服务说明" prop="serviceDescription">
             <el-input v-model="form.serviceDescription"></el-input>
           </el-form-item>
@@ -125,6 +128,7 @@ export default {
         serviceName: '',
         serviceDescription: '',
         serviceType: '',
+        serviceTitle: '',
         servicePrice: '',
         servicePriceUnit: '',
         specificService: '',
