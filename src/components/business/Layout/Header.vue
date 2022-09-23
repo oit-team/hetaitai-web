@@ -1,7 +1,7 @@
 <template>
   <el-header>
     <div class="system">
-      <el-avatar style="width: 40px; height: 40px" src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png" />
+      <el-avatar class="logo-box" />
       <span class="system-name">禾太太管理系统</span>
     </div>
 
@@ -113,6 +113,12 @@ export default {
     font-weight: bold;
     line-height: 0;
     padding-left: 12px;
+  }
+  .logo-box{
+    width: 35px;
+    height: 35px;
+    background:url('~@/assets/logo.svg') 0 center no-repeat ;
+    background-size: 35px;
   }
 }
 

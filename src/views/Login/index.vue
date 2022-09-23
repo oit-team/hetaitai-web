@@ -1,8 +1,17 @@
 <template>
-  <div class="he-page">
-    <div></div>
-    <div class="w-1/4 flex justify-center">
-      <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+  <div class="he-page flex justify-center items-center">
+    <div class="form-box rounded-md flex justify-center items-center">
+      <div class="logo-box">
+        <img src="@/assets/logo-head.svg" height="125" width="125">
+      </div>
+      <el-form
+        ref="form"
+        class="loginForm space-y-8"
+        :rules="rules"
+        size="medium"
+        :model="form"
+        label-width="100px"
+      >
         <el-form-item prop="name">
           <el-input v-model="form.userPhone" prefix-icon="el-icon-s-custom"></el-input>
         </el-form-item>
@@ -60,10 +69,15 @@ export default {
 
 <style lang='scss' scoped>
 .he-page{
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
   width: 100%;
   height: 100vh;
+  background:url('~@/assets/login-bg-img.png') center no-repeat;
+  background-size: cover;
+  .form-box{
+    width: 600px;
+    height: 400px;
+    background-color: #fff;
+    z-index: 1000;
+  }
 }
 </style>
