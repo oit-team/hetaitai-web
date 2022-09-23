@@ -50,7 +50,7 @@ export default {
                 icon: 'el-icon-edit',
                 click: ({ row }) => this.$router.push({
                   path: '/servicelist/editService',
-                  query: { item: row },
+                  query: { id: row.id },
                 }),
               },
             ],

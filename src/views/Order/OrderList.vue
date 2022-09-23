@@ -14,7 +14,7 @@
     <el-drawer
       ref="drawer"
       custom-class="demo-drawer"
-      title="下发订单"
+      title="分配订单"
       :visible.sync="drawer"
       direction="rtl"
       size="45%"
@@ -120,12 +120,12 @@ export default {
                 click: ({ row }) => this.$router.push({
                   name: 'CheckOrder',
                   query: {
-                    item: row,
+                    orderNo: row.orderNo,
                   },
                 }),
               },
               {
-                tip: '下发',
+                tip: '分配',
                 type: 'success',
                 icon: 'el-icon-thumb',
                 disabled: this.isDisabled,
@@ -215,7 +215,7 @@ export default {
 
       return color
     },
-    // 设置下发订单文本域
+    // 设置分配订单文本域
     setAllotTableField() {
       this.$refs.allotTable.setFields([{
         fieldKey: 'nickName',
@@ -280,7 +280,7 @@ export default {
       return !(row.isSend === 1 && row.orderStateKey === 2)
     },
 
-    // 点击下发订单按钮
+    // 点击分配订单按钮
     allocationOrder({ row }) {
       this.orderNo = row.orderNo
       this.drawer = true

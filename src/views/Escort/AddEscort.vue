@@ -72,10 +72,10 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.item) {
+    if (this.$route.query.id) {
       this.title = '编辑陪诊员'
       this.editFlag = false
-      this.id = this.$route.query.item.id
+      this.id = this.$route.query.id
       this.getEscortListById()
     } else {
       this.title = '新增陪诊员'

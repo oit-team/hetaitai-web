@@ -14,9 +14,6 @@
           <el-form-item label="服务标题" prop="serviceName">
             <el-input v-model="form.serviceTitle"></el-input>
           </el-form-item>
-          <el-form-item label="服务说明" prop="serviceDescription">
-            <el-input v-model="form.serviceDescription"></el-input>
-          </el-form-item>
           <el-form-item label="服务类型" prop="serviceType">
             <el-select v-model="form.serviceType" placeholder="请选择服务类型">
               <el-option label="陪诊" :value="1"></el-option>
@@ -92,12 +89,16 @@
               点击新增服务对象
             </el-button>
           </el-form-item>
-          <el-form-item label="告知流程" prop="informProcess">
-            <el-input v-model="form.informProcess"></el-input>
-          </el-form-item>
           <el-form-item label="电话回访" prop="phoneAccess">
             <el-input v-model="form.phoneAccess"></el-input>
           </el-form-item>
+          <el-form-item label="告知流程" prop="informProcess">
+            <el-input v-model="form.informProcess" type="textarea" autosize></el-input>
+          </el-form-item>
+          <el-form-item label="服务说明" prop="serviceDescription">
+            <el-input v-model="form.serviceDescription" type="textarea" autosize></el-input>
+          </el-form-item>
+
           <el-form-item>
             <el-button size="small" icon="el-icon-check" type="primary" @click="submitForm('form')">
               保存
@@ -142,10 +143,10 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.item) {
+    if (this.$route.query.id) {
       this.title = '编辑服务'
       this.editFlag = false
-      this.id = this.$route.query.item.id
+      this.id = this.$route.query.id
       this.getServicesListById()
       this.dictitemServiceInfo()
     } else {

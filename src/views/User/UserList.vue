@@ -45,7 +45,7 @@ export default {
                 click: ({ row }) => this.$router.push({
                   name: 'AddUser',
                   query: {
-                    item: row,
+                    id: row.id,
                     edit: false,
                   },
                 }),
@@ -58,7 +58,7 @@ export default {
                 click: ({ row }) => this.$router.push({
                   name: 'AddUser',
                   query: {
-                    item: row,
+                    id: row.id,
                     edit: true,
                   },
                 }),

@@ -67,11 +67,11 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.item) {
+    if (this.$route.query.id) {
       this.isEdit = this.$route.query.edit
       this.title = this.isEdit ? '编辑用户' : '查看用户'
       // this.editFlag = false
-      this.id = this.$route.query.item.id
+      this.id = this.$route.query.id
       this.getUserById()
     } else {
       // this.title = '新增用户'

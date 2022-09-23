@@ -155,9 +155,9 @@ export default {
     }
   },
   created() {
-    if (this.$route.query.item) {
+    if (this.$route.query.orderNo) {
       this.title = '订单详情'
-      this.orderNo = this.$route.query.item.orderNo
+      this.orderNo = this.$route.query.orderNo
       this.getCustomerOrderById()
     }
   },

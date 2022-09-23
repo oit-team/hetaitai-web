@@ -53,7 +53,7 @@ export default {
                 icon: 'el-icon-edit',
                 click: ({ row }) => this.$router.push({
                   path: '/escortlist/addEscort',
-                  query: { item: row },
+                  query: { id: row.id },
                 }),
               },
               {
