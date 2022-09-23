@@ -11,7 +11,7 @@
           <el-form-item label="服务名称" prop="serviceName">
             <el-input v-model="form.serviceName"></el-input>
           </el-form-item>
-          <el-form-item label="服务标题" prop="serviceName">
+          <el-form-item label="服务标题" prop="serviceTitle">
             <el-input v-model="form.serviceTitle"></el-input>
           </el-form-item>
           <el-form-item label="服务类型" prop="serviceType">
@@ -29,7 +29,7 @@
               <el-option label="元/时" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="是否上门接送" prop="specificServicecheckedServices">
+          <el-form-item label="是否上门接送" prop="specificService">
             <el-switch
               v-model="form.specificService"
               :active-value="1"
@@ -93,10 +93,10 @@
             <el-input v-model="form.phoneAccess"></el-input>
           </el-form-item>
           <el-form-item label="告知流程" prop="informProcess">
-            <el-input v-model="form.informProcess" type="textarea" autosize></el-input>
+            <el-input v-model="form.informProcess" type="textarea" autosize resize="none"></el-input>
           </el-form-item>
           <el-form-item label="服务说明" prop="serviceDescription">
-            <el-input v-model="form.serviceDescription" type="textarea" autosize></el-input>
+            <el-input v-model="form.serviceDescription" type="textarea" autosize resize="none"></el-input>
           </el-form-item>
 
           <el-form-item>
