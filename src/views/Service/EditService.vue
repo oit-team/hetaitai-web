@@ -7,7 +7,7 @@
       </header>
       <el-divider></el-divider>
       <el-main style="width:60%;">
-        <el-form ref="form" :model="form" label-width="140px">
+        <el-form ref="form" :model="form" :rules="rules" label-width="140px">
           <el-form-item label="服务名称" prop="serviceName">
             <el-input v-model="form.serviceName"></el-input>
           </el-form-item>
@@ -38,6 +38,9 @@
               inactive-text="否"
             >
             </el-switch>
+          </el-form-item>
+          <el-form-item v-if="form.specificService" label="接送金额" prop="serviceSpecificPrice">
+            <el-input v-model="form.serviceSpecificPrice"></el-input>
           </el-form-item>
           <el-form-item label="服务内容" prop="serviceContent">
             <el-checkbox-group v-model="checkedServices">
@@ -131,6 +134,7 @@ export default {
         serviceType: '',
         serviceTitle: '',
         servicePrice: '',
+        serviceSpecificPrice: '',
         servicePriceUnit: '',
         specificService: '',
         serviceContent: '',
@@ -140,6 +144,26 @@ export default {
       },
       content: '',
       id: '',
+      rules: {
+        serviceName: [
+          { required: true, message: '请填写服务名称', trigger: 'blur' },
+        ],
+        serviceTitle: [
+          { required: true, message: '请填写服务标题', trigger: 'blur' },
+        ],
+        serviceType: [
+          { required: true, message: '请选择服务类型', trigger: 'blur' },
+        ],
+        servicePrice: [
+          { required: true, message: '接送金额要大于0', trigger: 'blur' },
+        ],
+        servicePriceUnit: [
+          { required: true, message: '请选择服务价格单位', trigger: 'blur' },
+        ],
+        specificService: [
+          { required: true, message: '请选择是否上门接送', trigger: 'blur' },
+        ],
+      },
     }
   },
   created() {
@@ -202,6 +226,9 @@ export default {
     },
     // 修改服务
     async updateServices() {
+      const price = this.form.serviceSpecificPrice && this.form.specificService
+      this.form.serviceSpecificPrice = price ? this.form.serviceSpecificPrice : 0
+
       await updateServices({
         ...this.form,
       })

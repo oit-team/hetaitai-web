@@ -22,7 +22,7 @@
           <el-descriptions-item label="订单编号">
             {{ form.orderNo || '暂无' }}
           </el-descriptions-item>
-          <el-descriptions-item label="上门金额">
+          <el-descriptions-item label="接送金额">
             {{ form.specificMoney || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="服务金额">
@@ -61,10 +61,10 @@
                 <el-descriptions-item label="联系电话">
                   {{ form.customerPhone || '暂无' }}
                 </el-descriptions-item>
-                <!-- <el-descriptions-item label="上门时间">
+                <!-- <el-descriptions-item label="接送时间">
                   {{ form.customerDoorTime }}
                 </el-descriptions-item> -->
-                <el-descriptions-item label="上门地址">
+                <el-descriptions-item label="接送地址">
                   {{ form.customerAddress || '暂无' }}
                 </el-descriptions-item>
               </el-descriptions>

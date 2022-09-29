@@ -11,6 +11,7 @@ module.exports = defineConfig({
     proxy: { // 配置跨域
       '/api': {
         target: 'http://192.168.9.94:9611',
+        // target: 'http://app.jxhtt.cn:8081',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '',
