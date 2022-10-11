@@ -100,6 +100,26 @@ export default [
         },
         component: () => import('../views/Order/CheckOrder.vue'),
       },
+      {
+        path: '/trainingList/addTrain',
+        name: 'AddTrain',
+        meta: {
+          title: '新增培训计划',
+          keepAlive: false,
+          requiresAuth: true,
+        },
+        component: () => import('../views/Training/AddTrain.vue'),
+      },
+      {
+        path: '/trainingList',
+        name: 'TrainingList',
+        meta: {
+          title: '培训管理',
+          keepAlive: false,
+          requiresAuth: true,
+        },
+        component: () => import('../views/Training/TrainingList.vue'),
+      },
     ],
   },
 ]
