@@ -1,6 +1,6 @@
 <template>
   <div id="addTrain" class="pageCommonStyle h-full">
-    <el-page-header :content="isAdd ? '新增培训计划' : '编辑培训计划'" @back="goBack"></el-page-header>
+    <el-page-header :content="isAdd ? '新增培训' : '编辑培训'" @back="goBack"></el-page-header>
     <el-divider></el-divider>
     <el-form
       ref="ruleForm"

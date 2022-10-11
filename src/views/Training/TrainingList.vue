@@ -40,7 +40,7 @@ export default {
         promise: this.getTrainList,
         actions: [
           {
-            name: '新增培训计划',
+            name: '新增培训',
             type: 'success',
             icon: 'el-icon-plus',
             to: '/trainingList/addTrain',
