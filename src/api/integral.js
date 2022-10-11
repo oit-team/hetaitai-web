@@ -16,6 +16,10 @@ export function updateGoodsState(params) {
   return post('/appServer/integralGoods/updateGoodsState', params)
 }
 
+export function deleteGoods(params) {
+  return post('/appServer/integralGoods/delGoodsInfo', params)
+}
+
 export function getGoodsExchangeRecord(params) {
   return post('/appServer/integralGoods/getGoodsExchangeRecord', params)
 }

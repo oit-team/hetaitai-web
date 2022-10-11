@@ -88,15 +88,18 @@ export default {
     },
 
     // 删除培训
-    async delTraining({ row }) {
-      const res = await delTraining({
-        trainingId: row.id,
-      })
-      this.getTrainList()
-      this.$message({
-        message: res.head.msg,
-        type: 'success',
-      })
+    delTraining({ row }) {
+      this.$confirm('确定删除该计划', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'error',
+      }).then(async () => {
+        const res = await delTraining({
+          trainingId: row.id,
+        })
+        this.getTrainList()
+        this.$message.success(res.head.msg)
+      }).catch(() => {})
     },
   },
 }

@@ -3,11 +3,6 @@
     <main class="flex-1 flex flex-col overflow-hidden">
       <div id="customerList" class="pageCommonStyle h-full flex flex-col">
         <TablePage v-bind="tablePageOption" ref="table" auto>
-          <template #content:orderState="{ row }">
-            <el-tag :type="getStateColor(row.orderStateKey, 'order')">
-              {{ row.orderState }}
-            </el-tag>
-          </template>
         </TablePage>
       </div>
     </main>
@@ -19,11 +14,11 @@
       ref="drawer"
     >
       <div class="h-full p-8 flex flex-col justify-between">
-        <el-form :model="form" class="flex-1" label-width="80px">
-          <el-form-item label="商品名称">
+        <el-form :model="form" :rules="rules" class="flex-1" label-width="80px">
+          <el-form-item label="商品名称" prop="goodsName">
             <el-input v-model="form.goodsName" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="商品描述">
+          <el-form-item label="商品描述" prop="goodsDescribe">
             <el-input
               v-model="form.goodsDescribe"
               autocomplete="off"
@@ -32,11 +27,11 @@
               rows="2"
             ></el-input>
           </el-form-item>
-          <el-form-item label="兑换积分">
-            <el-input v-model="form.consumePoints" autocomplete="off"></el-input>
+          <el-form-item label="兑换积分" prop="consumePoints">
+            <el-input v-model.number="form.consumePoints" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item label="库存数量">
-            <el-input v-model="form.stockNum" autocomplete="off"></el-input>
+          <el-form-item label="库存数量" prop="stockNum">
+            <el-input v-model.number="form.stockNum" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
         <div class="demo-drawer__footer flex" v-if="isEdit === ''">
@@ -53,7 +48,7 @@
 </template>
 
 <script>
-import { addGoods, getGoodsList, updateGoodsInfo, updateGoodsState } from '@/api/integral'
+import { addGoods, deleteGoods, getGoodsList, updateGoodsInfo, updateGoodsState } from '@/api/integral'
 
 export default {
   name: 'IntegralGoodsList',
@@ -73,6 +68,18 @@ export default {
         consumePoints: '',
         stockNum: '',
         goodsState: '0',
+      },
+      rules: {
+        goodsName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+        goodsDescribe: [{ required: true, message: '请输入商品描述', trigger: 'blur' }],
+        consumePoints: [
+          { required: true, message: '请输入兑换积分', trigger: 'blur' },
+          { type: 'number', message: '积分必须为数字值', trigger: ['blur', 'change'] },
+        ],
+        stockNum: [
+          { required: true, message: '请输入商品库存', trigger: 'blur' },
+          { type: 'number', message: '库存必须为数字值', trigger: ['blur', 'change'] },
+        ],
       },
       data: {},
       dialog: false,
@@ -139,12 +146,12 @@ export default {
                 disabled: ({ row }) => row.goodsState === 3,
                 click: ({ row }) => this.putGoods(row),
               },
-              // {
-              //   tip: '删除',
-              //   type: 'danger',
-              //   icon: 'el-icon-delete',
-              //   click: ({ row }) => this.deleteGoods(row),
-              // },
+              {
+                tip: '删除',
+                type: 'info',
+                icon: 'el-icon-delete',
+                click: ({ row }) => this.deleteGoods(row),
+              },
             ],
           },
         },
@@ -168,18 +175,23 @@ export default {
       }
     },
     // 新增商品提交按钮
-    async onSubmit() {
+    onSubmit() {
       this.loading = true
-      const res = await addGoods({ ...this.form })
-      if (res.head.status === 0) {
-        this.$message.success('新增成功')
+      addGoods({
+        ...this.form,
+      }).then((res) => {
+        if (res.head.status === 0) {
+          this.$message.success('新增成功')
+          this.dialog = false
+          this.getData()
+        } else {
+          this.$message.error(res.head.msg)
+        }
+      }).catch((ref) => {
+        this.$message.error(ref.message)
+      }).finally(() => {
         this.loading = false
-        this.dialog = false
-        this.getData()
-      } else {
-        this.$message.error(res.head.msg)
-        this.loading = false
-      }
+      })
     },
     // 新增积分商品
     addGoods() {
@@ -194,25 +206,35 @@ export default {
       this.isEdit = ''
     },
     // 修改商品信息
-    async onUpdata() {
-      this.loading = true
-      this.form.goodsState = undefined
-      const res = await updateGoodsInfo({
-        ...this.form,
-      })
-      if (res.head.status === 0) {
-        this.loading = false
-        this.dialog = false
-        this.$message.success('修改成功')
-        this.getData()
-      } else {
-        this.loading = false
-        this.$message.error(res.head.msg)
-      }
+    onUpdata() {
+      this.$confirm('确定修改该商品', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        this.loading = true
+        this.form.goodsState = undefined
+        updateGoodsInfo({
+          ...this.form,
+        }).then((res) => {
+          if (res.head.status === 0) {
+            this.loading = false
+            this.dialog = false
+            this.$message.success('修改成功')
+            this.getData()
+          } else {
+            this.loading = false
+            this.$message.error(res.head.msg)
+          }
+        })
+      }).catch(() => {})
     },
     // 商品上下架
     putGoods(row) {
-      if (row.goodsState === 2) this.$message.error('商品库存不足')
+      if (row.goodsState === 2) {
+        this.$message.error('商品库存不足')
+        return false
+      }
       let msg = ''
       if (row.goodsState === 0) {
         msg = '是否确定上架该商品'
@@ -234,7 +256,28 @@ export default {
         } else {
           this.$message.error(res.head.msg)
         }
-      }).catch()
+      }).catch(() => {})
+    },
+    // 删除商品
+    deleteGoods(row) {
+      this.$confirm('确定删除该商品', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'error',
+      }).then(() => {
+        deleteGoods({
+          goodsId: row.id,
+        }).then((res) => {
+          if (res.head.status === 0) {
+            this.$message.success('删除商品成功')
+            this.getData()
+          } else {
+            this.$message.success('删除失败，请重试')
+          }
+        }).catch((ref) => {
+          this.$message.success(ref.message)
+        })
+      }).catch(() => {})
     },
   },
 }
