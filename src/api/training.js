@@ -25,4 +25,3 @@ export function delTraining(params) {
 export function getSysUserList(params) {
   return post('/appServer/trainingRecord/getSysUserList', params)
 }
-
