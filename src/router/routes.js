@@ -140,26 +140,6 @@ export default [
         },
         component: () => import('../views/Training/TrainingList.vue'),
       },
-      {
-        path: '/integralGoodsList',
-        name: 'IntegralGoodsList',
-        meta: {
-          title: '积分商品',
-          keepAlive: false,
-          requiresAuth: true,
-        },
-        component: () => import('../views/Integral/IntegralGoodsList.vue'),
-      },
-      {
-        path: '/integralGoodsRecord',
-        name: 'IntegralGoodsRecord',
-        meta: {
-          title: '积分商品兑换记录',
-          keepAlive: false,
-          requiresAuth: true,
-        },
-        component: () => import('../views/Integral/IntegralGoodsRecord.vue'),
-      },
     ],
   },
 ]
