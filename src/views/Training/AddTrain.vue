@@ -11,10 +11,10 @@
       class="demo-ruleForm"
     >
       <el-form-item label="培训标题" prop="titleName">
-        <el-input v-model="ruleForm.titleName" maxlength="10" placeholder="请选择培训标题"></el-input>
+        <el-input v-model="ruleForm.titleName" maxlength="10" placeholder="请输入培训标题"></el-input>
       </el-form-item>
       <el-form-item label="培训内容" prop="trainingContent">
-        <el-input v-model="ruleForm.trainingContent" maxlength="10" placeholder="请选择培训内容"></el-input>
+        <el-input v-model="ruleForm.trainingContent" maxlength="10" placeholder="请输入培训内容"></el-input>
       </el-form-item>
       <el-form-item label="培训时间">
         <el-date-picker
