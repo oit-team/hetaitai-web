@@ -154,6 +154,12 @@ export default {
       await this.getSysUserList(id || 0)
       if (id) await this.getTrainingById(id)
     },
+
+    async getUserListById() {
+      const id = this.$route.query.id
+      await this.getSysUserList(id || 0)
+    },
+
     // 获取护工列表
     async getSysUserList(id) {
       const res = await getSysUserList({
@@ -165,11 +171,28 @@ export default {
       this.sysUserList = res.body.sysUserList
       this.sysUserListCount = res.body.count
       this.trainingSysUserList = res.body.trainingSysUserList
+      this.userListChecked()
     },
+
+    userListChecked() {
+      // 匹配userId 并勾选
+      const selectData = this.trainingSysUserList
+      if (selectData) {
+        const userIds = this.sysUserList.map(({ userId }) => userId)
+        selectData.forEach((row) => {
+          const index = userIds.indexOf(row)
+          if (~index) {
+            this.$refs.multipleTable.toggleRowSelection(this.sysUserList[index], true)
+          }
+        })
+      }
+    },
+
+    // 列表搜索
     selectUserDatasList() {
-      const id = this.$route.query.id
-      this.getSysUserList(id || 0)
+      this.getUserListById()
     },
+
     handleSelectionChange(val) {
       const selectList = []
       val.forEach((item) => {
@@ -177,15 +200,18 @@ export default {
       })
       this.multipleSelection = selectList
     },
+
     handleSizeChange(val) {
       this.pageSize = val
-      this.getSysUserList()
+      this.getUserListById()
     },
+
     handleCurrentChange(val) {
       this.currentPage = val
       this.pageNum = val
-      this.getSysUserList()
+      this.getUserListById()
     },
+
     goBack() {
       this.$router.go(-1)
     },
@@ -223,18 +249,6 @@ export default {
       })
       this.ruleForm = res.body
       this.$set(this.ruleForm, 'trainTime', [this.ruleForm.startTime, this.ruleForm.endTime])
-
-      // 匹配userId 并勾选
-      const selectData = this.trainingSysUserList
-      if (selectData) {
-        const userIds = this.sysUserList.map(({ userId }) => userId)
-        selectData.forEach((row) => {
-          const index = userIds.indexOf(row)
-          if (~index) {
-            this.$refs.multipleTable.toggleRowSelection(this.sysUserList[index], true)
-          }
-        })
-      }
     },
 
     async submitForm(formName) {
