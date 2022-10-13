@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@oit/api-error": "0.1.0-beta.0",
-    "@oit/element-ui-extend": "^0.3.2",
+    "@oit/element-ui-extend": "^0.3.7",
     "axios": "^0.27.2",
     "core-js": "^3.8.3",
     "crypto-js": "^4.1.1",

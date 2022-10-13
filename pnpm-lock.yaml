@@ -5,7 +5,7 @@ specifiers:
   '@commitlint/cli': ^17.0.3
   '@commitlint/config-conventional': ^17.0.3
   '@oit/api-error': 0.1.0-beta.0
-  '@oit/element-ui-extend': ^0.3.2
+  '@oit/element-ui-extend': ^0.3.7
   '@oit/eslint-config': ^0.3.2
   '@vue/cli-plugin-babel': ~5.0.0
   '@vue/cli-plugin-eslint': ~5.0.0
@@ -30,7 +30,7 @@ specifiers:
 
 dependencies:
   '@oit/api-error': 0.1.0-beta.0_axios@0.27.2
-  '@oit/element-ui-extend': 0.3.2_qtsou2qbfp4cfjly6acgmsx5xu
+  '@oit/element-ui-extend': 0.3.7_qtsou2qbfp4cfjly6acgmsx5xu
   axios: 0.27.2
   core-js: 3.24.1
   crypto-js: 4.1.1
@@ -1574,8 +1574,8 @@ packages:
       axios: 0.27.2
     dev: false
 
-  /@oit/element-ui-extend/0.3.2_qtsou2qbfp4cfjly6acgmsx5xu:
-    resolution: {integrity: sha512-s6hHRkh6hG+MVtJ3LgBl/EkBOj0W4wmSxqaW2LqRLkHiSiM2Dv5Cn/Ke+HY1yL/4MsfIlligOTOj7wC0osktBg==}
+  /@oit/element-ui-extend/0.3.7_qtsou2qbfp4cfjly6acgmsx5xu:
+    resolution: {integrity: sha512-3SPuNDi+o6cTgbCgS1yTEvoctgcCaCE/kAoeBLir4ciIoqAiTci8rNNvQfITVJdDPp/WnB7xZRnWC60HDQdkIA==}
     peerDependencies:
       element-ui: ^2.15.9
       sass: ^1.53.0
@@ -5871,6 +5871,10 @@ packages:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
     dev: true
 
+  /minimist/1.2.7:
+    resolution: {integrity: sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==}
+    dev: true
+
   /minipass/3.3.4:
     resolution: {integrity: sha512-I9WPbWHCGu8W+6k1ZiGpPu0GkoKBeorkfKNuAFBNS1HNFJvke82sxvI5bzcCNpWPorkOO5QQ+zomzzwRxejXiw==}
     engines: {node: '>=8'}
@@ -7714,7 +7718,7 @@ packages:
     dependencies:
       '@types/json5': 0.0.29
       json5: 1.0.1
-      minimist: 1.2.6
+      minimist: 1.2.7
       strip-bom: 3.0.0
     dev: true
 
