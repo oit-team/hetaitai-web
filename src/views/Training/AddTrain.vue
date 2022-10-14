@@ -48,8 +48,6 @@ export default {
   components: {},
   data() {
     return {
-      search: '',
-      currentPage: 1,
       isAdd: true,
       title: '',
 
@@ -58,9 +56,6 @@ export default {
         trainingContent: '',
         trainTime: '',
       },
-
-      pageNum: 1,
-      pageSize: 10,
 
       rules: {
         titleName: [

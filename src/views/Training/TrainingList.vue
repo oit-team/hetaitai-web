@@ -10,7 +10,7 @@
       :visible.sync="drawer"
       :with-header="false"
       direction="rtl"
-      size="42%"
+      size="45%"
     >
       <el-tabs v-model="tabsIndex" class="py-3 px-4" @tab-click="changeTabs">
         <el-tab-pane label="已选成员" name="2" lazy>
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { addTrainingUser, delTraining, delTrainingUser, getSysUserList, getTrainList } from '@/api/training'
+import { addTrainingUser, delTraining, delTrainingUser, getSysUserList, getTrainList, updateTrainingState } from '@/api/training'
 
 export default {
   name: 'TrainingList',
@@ -72,19 +72,28 @@ export default {
                   path: '/trainingList/addTrain',
                   query: { id: row.id },
                 }),
+                disabled: ({ row }) => row.trainingState !== 0, // 除已结束 其余可用
               },
               {
                 tip: '指配成员',
                 type: 'success',
                 icon: 'el-icon-thumb',
                 click: this.getTabUserList,
+                disabled: ({ row }) => row.trainingState !== 0,
               },
               {
                 tip: '删除',
                 type: 'danger',
                 icon: 'el-icon-delete',
                 click: this.delTraining,
-                disabled: ({ row }) => row.trainingState !== 0,
+                disabled: ({ row }) => row.trainingState !== 0, // 只有待开始可用
+              },
+              {
+                tip: '结束培训',
+                type: 'primary',
+                icon: 'el-icon-set-up',
+                click: this.updateTrainingState,
+                disabled: ({ row }) => row.trainingState !== 1, // 只有培训中可用
               },
             ],
           },
@@ -147,7 +156,7 @@ export default {
 
     // 删除培训
     delTraining({ row }) {
-      this.$confirm('确定删除该计划', '提示', {
+      this.$confirm('确定删除该培训？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'error',
@@ -157,7 +166,23 @@ export default {
         })
         this.getTrainList()
         this.$message.success(res.head.msg)
-      }).catch(() => {})
+      })
+    },
+
+    // 结束培训
+    updateTrainingState({ row }) {
+      this.$confirm('确定结束该培训？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(async () => {
+        const res = await updateTrainingState({
+          trainingId: row.id,
+          trainingState: 2,
+        })
+        this.getTrainList()
+        this.$message.success(res.head.msg)
+      })
     },
 
     // 点击打开分配成员
@@ -167,12 +192,15 @@ export default {
       this.$nextTick(() => {
         this.$refs.checkedTable.clearSelection()
         this.setCheckedTableField()
+        this.getcheckedUserList()
       })
     },
 
     // 获取成员
     async getcheckedUserList(params) {
       const res = await getSysUserList({
+        pageNum: 1,
+        pageSize: 20,
         ...params,
         trainingId: this.userId,
         codeType: this.tabsIndex,

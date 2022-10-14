@@ -32,3 +32,7 @@ export function addTrainingUser(params) {
 export function delTrainingUser(params) {
   return post('/appServer/trainingRecord/delTrainingUser', params)
 }
+export function updateTrainingState(params) {
+  return post('/appServer/trainingRecord/updateTrainingState', params)
+}
+
