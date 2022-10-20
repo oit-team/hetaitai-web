@@ -234,28 +234,35 @@ export default {
 
     saveUserInfo() {
       const checkedeIds = this.$refs.checkedTable.selected.map(({ userId }) => userId)
-      this.$confirm('确定保存吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-      }).then(() => {
-        if (this.tabsIndex === '2') {
-          this.delTrainingUser(checkedeIds)
-        } else {
-          this.addTrainingUser(checkedeIds)
-        }
-        this.changeTabs()
-        this.drawer = false
-        this.$message({
-          type: 'success',
-          message: '保存成功!',
+      if (checkedeIds && checkedeIds.length > 0) {
+        this.$confirm('确定保存吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          if (this.tabsIndex === '2') {
+            this.delTrainingUser(checkedeIds)
+          } else {
+            this.addTrainingUser(checkedeIds)
+          }
+          this.changeTabs()
+          this.drawer = false
+          this.$message({
+            type: 'success',
+            message: '保存成功!',
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消保存',
+          })
         })
-      }).catch(() => {
+      } else {
         this.$message({
-          type: 'info',
-          message: '已取消保存',
+          type: 'warning',
+          message: '请先批量勾选成员！',
         })
-      })
+      }
     },
 
   },
