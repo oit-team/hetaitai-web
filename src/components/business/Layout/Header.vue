@@ -37,7 +37,7 @@ import { getTreeMenuList } from '@/api/common'
 export default {
   name: 'VcHeader',
   data: () => ({
-    activeIndex: '1',
+    activeIndex: sessionStorage.getItem('activeIndex') || '1',
     menuList: [],
   }),
   watch: {
@@ -47,11 +47,14 @@ export default {
         MenuStatus[item.menuCode] = ''
       })
       sessionStorage.MenuStatus = JSON.stringify(MenuStatus)
-      const current = this.menuList.find(item => item.menuUrl === this.$route.path) ?? this.menuList[0]
+      const current = this.menuList.find(item => item.menuUrl === this.$route.path)
       this.setTab(current)
     },
     $route() {
       this.setCurrentTab()
+    },
+    activeIndex() {
+      sessionStorage.setItem('activeIndex', this.activeIndex)
     },
   },
   created() {
@@ -117,7 +120,7 @@ export default {
   .logo-box{
     width: 35px;
     height: 35px;
-    background:url('~@/assets/logo.svg') 0 center no-repeat ;
+    background:url('~@/assets/logo.jpg') 0 center no-repeat ;
     background-size: 35px;
   }
 }
