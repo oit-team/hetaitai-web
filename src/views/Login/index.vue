@@ -2,7 +2,7 @@
   <div class="he-page flex justify-center items-center">
     <div class="form-box rounded-md flex justify-center items-center">
       <div class="logo-box">
-        <img src="@/assets/logo-head.svg" height="125" width="125">
+        <img src="@/assets/logo.png" height="125" width="125">
       </div>
       <el-form
         ref="form"
@@ -77,6 +77,7 @@ export default {
     width: 600px;
     height: 400px;
     background-color: #fff;
+    box-shadow: 5px 5px 10px #bbb;
     z-index: 1000;
   }
 }
