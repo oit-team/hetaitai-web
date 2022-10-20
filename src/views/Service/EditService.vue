@@ -209,7 +209,6 @@ export default {
         type: 'SERVICE_TYPE',
       })
       this.serverTypeList = res.body.result
-      console.log(this.serverTypeList)
     },
     // 根据字典项查询服务内容
     async dictitemServiceInfo() {

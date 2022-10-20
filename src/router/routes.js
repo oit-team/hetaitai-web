@@ -91,6 +91,16 @@ export default [
         component: () => import('../views/Order/OrderList.vue'),
       },
       {
+        path: '/integralmessagelist',
+        name: 'MessageBoard',
+        meta: {
+          title: '留言管理',
+          keepAlive: false,
+          requiresAuth: true,
+        },
+        component: () => import('../views/MessageBoard/index'),
+      },
+      {
         path: '/orderlist/checkOrder',
         name: 'CheckOrder',
         meta: {
