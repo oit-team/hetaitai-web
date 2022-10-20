@@ -13,14 +13,14 @@
               分配记录
             </el-button>
           </template>
+          <el-descriptions-item label="订单编号">
+            {{ form.orderNo || '暂无' }}
+          </el-descriptions-item>
           <el-descriptions-item label="下单人">
             {{ form.orderUser || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="陪诊人">
             {{ form.escortId || '暂无' }}
-          </el-descriptions-item>
-          <el-descriptions-item label="订单编号">
-            {{ form.orderNo || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="接送金额">
             {{ form.specificMoney || '暂无' }}
@@ -28,22 +28,23 @@
           <el-descriptions-item label="服务金额">
             {{ form.orderMoney || '暂无' }}
           </el-descriptions-item>
+          <el-descriptions-item label="服务次数">
+            {{ form.serviceNum || '暂无' }}
+          </el-descriptions-item>
+          <el-descriptions-item label="医院名称">
+            {{ form.hospitalName || '暂无' }}
+          </el-descriptions-item>
           <el-descriptions-item label="订单总金额">
             {{ form.orderTotalMoney || '暂无' }}
-          </el-descriptions-item>
-          <el-descriptions-item label="下单时间">
-            {{ form.orderTime || '暂无' }}
           </el-descriptions-item>
           <el-descriptions-item label="订单状态">
             <el-tag size="small" :type="getStateColor(form.orderStateKey)">
               {{ form.orderState || '暂无' }}
             </el-tag>
           </el-descriptions-item>
-          <!-- <el-descriptions-item label="接单状态">
-            <el-tag size="small">
-              {{ form.orderState || '暂无' }}
-            </el-tag>
-          </el-descriptions-item> -->
+          <el-descriptions-item label="下单时间">
+            {{ form.orderTime || '暂无' }}
+          </el-descriptions-item>
           <el-descriptions-item label="订单备注">
             暂无
           </el-descriptions-item>
@@ -61,9 +62,6 @@
                 <el-descriptions-item label="联系电话">
                   {{ form.customerPhone || '暂无' }}
                 </el-descriptions-item>
-                <!-- <el-descriptions-item label="接送时间">
-                  {{ form.customerDoorTime }}
-                </el-descriptions-item> -->
                 <el-descriptions-item label="接送地址">
                   {{ form.customerAddress || '暂无' }}
                 </el-descriptions-item>

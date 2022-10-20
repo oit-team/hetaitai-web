@@ -16,8 +16,7 @@
           </el-form-item>
           <el-form-item label="服务类型" prop="serviceType">
             <el-select v-model="form.serviceType" placeholder="请选择服务类型">
-              <el-option label="陪诊" :value="1"></el-option>
-              <el-option label="陪检" :value="2"></el-option>
+              <el-option v-for="item in serverTypeList" :key="item.dictitemCode" :label="item.dicttimeDisplayName" :value="Number(item.dictitemCode)"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="服务价格" prop="servicePrice" disabled="editFlag">
@@ -25,8 +24,7 @@
           </el-form-item>
           <el-form-item label="服务价格单位" prop="servicePriceUnit">
             <el-select v-model="form.servicePriceUnit" placeholder="请选择服务价格单位">
-              <el-option label="元/次" :value="1"></el-option>
-              <el-option label="元/时" :value="2"></el-option>
+              <el-option v-for="item in serverPrice" :key="item.dictitemCode" :label="item.dicttimeDisplayName" :value="Number(item.dictitemCode)"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否上门接送" prop="specificService">
@@ -117,7 +115,7 @@
 </template>
 
 <script>
-import { getServicesListById, updateServices } from '@/api/service'
+import { dictitemInfoAllMethod, getServicesListById, updateServices } from '@/api/service'
 import { dictitemServiceInfo } from '@/api/dictionaries'
 export default {
   name: 'EditService',
@@ -126,6 +124,8 @@ export default {
       inputVisible: false,
       inputValue: '',
       editFlag: true,
+      serverPrice: [], // 价格列表
+      serverTypeList: [], // 服务类型
       checkedServices: [], // 选中的服务内容
       serviceContentList: [], // 服务内容列表
       form: {
@@ -173,6 +173,7 @@ export default {
       this.id = this.$route.query.id
       this.getServicesListById()
       this.dictitemServiceInfo()
+      this.getServiceTypeList()
     } else {
       this.title = '新增服务'
       this.form = {}
@@ -187,12 +188,28 @@ export default {
         serviceId: this.id,
       })
       this.form = res.body
+      this.getServicePriceList()
       this.form.serviceId = this.id
       this.form.serviceObject = this.form.serviceObject ? JSON.parse(this.form.serviceObject) : []
       this.form.serviceContent = JSON.parse(this.form.serviceContent)
       this.form.serviceContent.forEach((item) => {
         this.checkedServices.push(item.remark)
       })
+    },
+    // 根据字典项查询价格
+    async getServicePriceList() {
+      const res = await dictitemInfoAllMethod({
+        type: 'SERVICE_PRICE_UNIT',
+      })
+      this.serverPrice = res.body.result
+    },
+    // 根据字典项查询服务类型
+    async getServiceTypeList() {
+      const res = await dictitemInfoAllMethod({
+        type: 'SERVICE_TYPE',
+      })
+      this.serverTypeList = res.body.result
+      console.log(this.serverTypeList)
     },
     // 根据字典项查询服务内容
     async dictitemServiceInfo() {

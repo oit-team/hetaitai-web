@@ -75,7 +75,7 @@ export default {
       this.data = res.body
       this.$refs.table.doLayout()
     },
-    // 根据字典项查询订单状态
+    // 根据字典项查询服务类型
     async getServiceTypeList() {
       const res = await dictitemInfoAllMethod({
         type: 'SERVICE_TYPE',
