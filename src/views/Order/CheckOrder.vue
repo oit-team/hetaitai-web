@@ -45,6 +45,9 @@
           <el-descriptions-item label="下单时间">
             {{ form.orderTime || '暂无' }}
           </el-descriptions-item>
+          <el-descriptions-item label="陪诊时间">
+            {{ form.customerDoorTime || '暂无' }}
+          </el-descriptions-item>
           <el-descriptions-item label="订单备注">
             暂无
           </el-descriptions-item>

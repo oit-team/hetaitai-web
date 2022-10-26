@@ -29,6 +29,29 @@
         </TablePage>
       </div>
     </el-drawer>
+    <el-dialog title="确认分配" width="30%" :visible.sync="dialogFormVisible" class="send-dialog">
+      <el-form>
+        <el-form-item label="陪诊时间">
+          <el-date-picker
+            v-model="sendTimer"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:00:00"
+            placeholder="选择陪诊时间"
+            :picker-options="pickerOptions"
+            popper-class="time-picker"
+          >
+          </el-date-picker>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelSendInfo">
+          取 消
+        </el-button>
+        <el-button type="primary" @click="confirmSendInfo">
+          确 定
+        </el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -84,11 +107,20 @@ export default {
         distributionState: '',
       },
       orderNo: '',
+      specificService: 0,
       orderSatusList: [], // 订单状态列表
       distributionStateList: [], // 接单状态列表
       newDistributionStateList: [],
       pageNum: 1,
       pageSize: 20,
+      dialogFormVisible: false,
+      sendUserId: '',
+      sendTimer: '', // 选择接送时间
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 24 * 60 * 60 * 1000
+        },
+      },
 
     }
   },
@@ -298,10 +330,32 @@ export default {
     },
     // 分配陪检员
     async updateDistributionState({ row }) {
+      this.sendUserId = row.userId
+      this.dialogFormVisible = true
+    },
+
+    cancelSendInfo() {
+      this.$message({
+        message: '取消分配!',
+        type: 'info',
+      })
+      this.sendTimer = ''
+      this.dialogFormVisible = false
+    },
+
+    async confirmSendInfo() {
+      if (!this.sendTimer) {
+        this.$message({
+          message: '请先选择陪诊时间!',
+          type: 'warning',
+        })
+        return
+      }
       await updateDistributionState({
         distributionState: '1',
         orderNo: this.orderNo,
-        distributionId: row.userId,
+        distributionId: this.sendUserId,
+        customerDoorTime: this.sendTimer,
       })
       this.$message({
         message: '分配成功!',
@@ -309,15 +363,26 @@ export default {
       })
       this.$refs.table.loadData()
       this.drawer = false
+      this.dialogFormVisible = false
     },
   },
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .allot-table{
   ::v-deep .el-form{
     grid-template-columns: repeat(2, 1fr)
   }
 }
+</style>
+
+<style lang="scss">
+  .time-picker .el-time-spinner.has-seconds .el-time-spinner__wrapper{
+    width: 100%;
+    display: none;
+  }
+  .time-picker .el-time-spinner.has-seconds .el-time-spinner__wrapper:first-child{
+    display: block;
+  }
 </style>
